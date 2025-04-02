@@ -17,9 +17,13 @@ public class Post {
     private Long PostId;
     private String content;
 
+    //지연 로딩: post 엔티티를 조회할때 바로 정보를 가져오지 않는다.
+    //post.getUser()를 호출하는 순간에 DB에서 진짜 User 정보를 조회
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 실제 FK 컬럼명
     private User user;
+
+    private String title ;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -32,6 +36,7 @@ public class Post {
 
     @Column(name = "comment_count")
     private int commentCount;
+
 
 
 }
