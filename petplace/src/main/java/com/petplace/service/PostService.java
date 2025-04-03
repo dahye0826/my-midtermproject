@@ -9,8 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import java.time.LocalDateTime;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class PostService{
     private final PostRepository postRepository;
@@ -32,15 +33,8 @@ public class PostService{
                 post.getTitle(),
                 post.getUser().getName(),
                 post.getCreatedAt().toLocalDate().toString().split("T")[0],
-                post.getUpdatedAt().toLocalDate().toString().split("T")[0],
                 post.getViewCount(),
                 post.getCommentCount()
         ));
-
-
-
     }
-
-
-
 }

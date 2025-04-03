@@ -1,13 +1,16 @@
 package com.petplace.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "posts")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public class Post {
@@ -27,9 +30,6 @@ public class Post {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime  updatedAt;
 
     @Column(name = "view_count")
     private int viewCount;
