@@ -1,6 +1,7 @@
 package com.petplace.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,17 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@NoArgsConstructor
+
 @Entity
 @Table(name = "posts")
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long PostId;
+    private Long postId;
     private String content;
 
     //지연 로딩: post 엔티티를 조회할때 바로 정보를 가져오지 않는다.
@@ -32,19 +34,17 @@ public class Post {
     @JoinColumn(name = "user_id") // 실제 FK 컬럼명
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "place_id") // place_id 외래 키 설정
-//    private Place place;
-
     private String title ;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
 
     @Column(name = "view_count")
     private int viewCount;

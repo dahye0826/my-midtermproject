@@ -8,19 +8,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
 public class PostController {
+<<<<<<< HEAD
 
     private final PostService postService;
 
 
+=======
+    private final PostService postService;
+    //http://localhost:9000/api/community?page=1&size=10
+>>>>>>> origin/master
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam int page,
                                       @RequestParam(required = false) String search,
                                       @RequestParam(defaultValue = "10")int size){
 
+<<<<<<< HEAD
 
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
@@ -37,6 +44,9 @@ public class PostController {
 
         postService.savePostWithImages(title,content,location,images, locationName,  locationAddress, lat, lng);
         return ResponseEntity.ok("등록 완료");
+=======
+        return ResponseEntity.ok(postService.getPosts(search, page, size));
+>>>>>>> origin/master
     }
 
 

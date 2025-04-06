@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+<<<<<<< HEAD
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +23,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+=======
+
+>>>>>>> origin/master
 @Service
 @RequiredArgsConstructor
 public class PostService{
@@ -44,10 +48,10 @@ public class PostService{
                 post.getTitle(),
                 post.getUser().getName(),
                 post.getCreatedAt().toLocalDate().toString().split("T")[0],
-                post.getUpdatedAt().toLocalDate().toString().split("T")[0],
                 post.getViewCount(),
                 post.getCommentCount()
         ));
+<<<<<<< HEAD
     }
     private final PostImageRepository postImageRepository;
     public void savePostWithImages(String title, String content, String location, List<MultipartFile> images,
@@ -92,4 +96,7 @@ public class PostService{
     }
 
 
+=======
+    }
+>>>>>>> origin/master
 }
