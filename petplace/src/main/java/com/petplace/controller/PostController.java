@@ -1,20 +1,47 @@
 package com.petplace.controller;
 
+import com.petplace.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/community")
+@RequiredArgsConstructor
 public class PostController {
+
+    private final PostService postService;
+
 
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam int page,
                                       @RequestParam(required = false) String search,
                                       @RequestParam(defaultValue = "10")int size){
-        return ResponseEntity.ok("게시물 목록 가져옴");
+
+
+        return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
+    @PostMapping
+    public ResponseEntity<?> createpost(
+            @RequestPart("postTitle") String title,
+            @RequestPart("postContent") String content,
+            @RequestPart("postLocation") String location,
+            @RequestPart(value = "postImages", required = false) List<MultipartFile> images,
+            @RequestPart(value = "locationName", required = false) String locationName,
+            @RequestPart(value = "locationAddress", required = false) String locationAddress,
+            @RequestPart(value = "locationLat", required = false) String lat,
+            @RequestPart(value = "locationLng", required = false) String lng ) { //@RequestPart는 파일 이미지 여러개 받기위해 사용(MultipartFile)
+
+        postService.savePostWithImages(title,content,location,images, locationName,  locationAddress, lat, lng);
+        return ResponseEntity.ok("등록 완료");
+    }
+
+
+
+
+
 
 }
