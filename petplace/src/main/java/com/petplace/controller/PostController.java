@@ -11,26 +11,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/community")
-@RequiredArgsConstructor
 public class PostController {
-<<<<<<< HEAD
 
     private final PostService postService;
 
-
-=======
-    private final PostService postService;
-    //http://localhost:9000/api/community?page=1&size=10
->>>>>>> origin/master
+    // http://localhost:9000/api/community?page=1&size=10
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam int page,
                                       @RequestParam(required = false) String search,
-                                      @RequestParam(defaultValue = "10")int size){
-
-<<<<<<< HEAD
-
+                                      @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
+
     @PostMapping
     public ResponseEntity<?> createpost(
             @RequestPart("postTitle") String title,
@@ -40,18 +32,10 @@ public class PostController {
             @RequestPart(value = "locationName", required = false) String locationName,
             @RequestPart(value = "locationAddress", required = false) String locationAddress,
             @RequestPart(value = "locationLat", required = false) String lat,
-            @RequestPart(value = "locationLng", required = false) String lng ) { //@RequestPart는 파일 이미지 여러개 받기위해 사용(MultipartFile)
+            @RequestPart(value = "locationLng", required = false) String lng) {
 
-        postService.savePostWithImages(title,content,location,images, locationName,  locationAddress, lat, lng);
+        postService.savePostWithImages(title, content, location, images, locationName, locationAddress, lat, lng);
         return ResponseEntity.ok("등록 완료");
-=======
-        return ResponseEntity.ok(postService.getPosts(search, page, size));
->>>>>>> origin/master
     }
-
-
-
-
-
 
 }
