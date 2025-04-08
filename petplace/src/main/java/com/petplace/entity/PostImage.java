@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "post_images")
 @NoArgsConstructor
 public class PostImage {
 
@@ -16,6 +17,7 @@ public class PostImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

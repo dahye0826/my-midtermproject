@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Setter
 public class Post {
