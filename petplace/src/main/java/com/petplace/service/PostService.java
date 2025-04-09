@@ -1,8 +1,10 @@
 package com.petplace.service;
 
 import com.petplace.dto.PostResponseDto;
+import com.petplace.entity.Places;
 import com.petplace.entity.Post;
 import com.petplace.entity.PostImage;
+import com.petplace.repository.PlacesRepository;
 import com.petplace.repository.PostImageRepository;
 import com.petplace.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ import java.util.UUID;
 public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
+    private final PlacesRepository placesRepository;
+
 
     // 게시글 목록 조회 (검색 + 페이징)
     public Page<PostResponseDto> getPosts(String search, int page, int size) {
@@ -45,23 +49,23 @@ public class PostService {
                 post.getCreatedAt().toLocalDate().toString(),
                 post.getUpdatedAt().toLocalDate().toString(), //수정
                 post.getViewCount(),
-                post.getCommentCount()
+                post.getCommentCount(),
+                post.getPlace() != null ? post.getPlace().getPlaceId() : null,
+                post.getPlace() != null ? post.getPlace().getPlaceName() : null
         ));
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content, String location, List<MultipartFile> images,
-                                   String locationName, String locationAddress, String lat, String lng) {
+    public void savePostWithImages(String title, String content, List<MultipartFile> images, Long placeId) {
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
-        post.setPostLocation(location);
-        post.setLocationName(locationName);
-        post.setLocationAddress(locationAddress);
-        post.setLocationLat(lat);
-        post.setLocationLng(lng);
         post.setViewCount(0);
         post.setCommentCount(0);
+
+        Places place = placesRepository.findById(placeId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 장소가 존재하지 않습니다: " + placeId));
+        post.setPlace(place);
 
         postRepository.save(post);
 

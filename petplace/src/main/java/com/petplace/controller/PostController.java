@@ -27,14 +27,10 @@ public class PostController {
     public ResponseEntity<?> createpost(
             @RequestPart("postTitle") String title,
             @RequestPart("postContent") String content,
-            @RequestPart("postLocation") String location,
-            @RequestPart(value = "postImages", required = false) List<MultipartFile> images,
-            @RequestPart(value = "locationName", required = false) String locationName,
-            @RequestPart(value = "locationAddress", required = false) String locationAddress,
-            @RequestPart(value = "locationLat", required = false) String lat,
-            @RequestPart(value = "locationLng", required = false) String lng) {
+            @RequestPart("placeId") Long placeId,
+            @RequestPart(value = "postImages", required = false) List<MultipartFile> images){
 
-        postService.savePostWithImages(title, content, location, images, locationName, locationAddress, lat, lng);
+        postService.savePostWithImages(title, content,placeId,images);
         return ResponseEntity.ok("등록 완료");
     }
 

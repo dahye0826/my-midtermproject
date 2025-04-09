@@ -52,16 +52,9 @@ public class Post {
     @Column(name = "comment_count")
     private int commentCount;
 
-    @Column(name ="post_location")
-    private String postLocation;// 프론트에서 검색한 키워드
-    @Column(name ="location_name")
-    private String locationName;     // 카카오 장소 이름
-    @Column(name ="location_address")
-    private String locationAddress;  // 카카오 장소 주소
-    @Column(name ="location_lat")
-    private String locationLat;      // 위도
-    @Column(name ="location_lng")
-    private String locationLng;      // 경도
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id")
+    private Places place;
 
     @OneToMany(mappedBy="post", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<PostImage> images = new ArrayList<>();

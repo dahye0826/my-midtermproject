@@ -15,4 +15,7 @@ public class PostResponseDto {
     private int viewCount;
     private int commentCount;
 
+    private Long placeId;
+    private String placeName;
+
 }
