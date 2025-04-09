@@ -41,8 +41,9 @@ public class PostService {
         return postPage.map(post -> new PostResponseDto(
                 post.getPostId(),
                 post.getTitle(),
-                post.getUser().getName(),
+                post.getUser().getUserName(),
                 post.getCreatedAt().toLocalDate().toString(),
+                post.getUpdatedAt().toLocalDate().toString(), //수정
                 post.getViewCount(),
                 post.getCommentCount()
         ));
@@ -84,7 +85,7 @@ public class PostService {
                 PostImage postImage = new PostImage();
                 postImage.setImageUrl("/images/post/" + fileName);
                 postImage.setPost(post);
-                System.out.println("🟩 실제 저장될 image_url: " + postImage.getImageUrl());
+                System.out.println("실제 저장될 image_url: " + postImage.getImageUrl());
                 postImageRepository.save(postImage);
 
 

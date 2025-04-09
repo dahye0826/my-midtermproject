@@ -11,6 +11,7 @@ public class PostResponseDto {
     private String title;
     private String name;
     private String  createdAt;
+    private String updatedAt; //수정
     private int viewCount;
     private int commentCount;
 
