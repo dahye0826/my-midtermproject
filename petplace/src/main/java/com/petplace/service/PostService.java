@@ -56,7 +56,7 @@ public class PostService {
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content, List<MultipartFile> images, Long placeId) {
+    public void savePostWithImages(String title, String content, Long placeId, List<MultipartFile> images) {
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
