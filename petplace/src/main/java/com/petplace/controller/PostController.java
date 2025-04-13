@@ -20,18 +20,46 @@ public class PostController {
     public ResponseEntity<?> getPosts(@RequestParam int page,
                                       @RequestParam(required = false) String search,
                                       @RequestParam(defaultValue = "10") int size) {
+
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> createpost(
             @RequestPart("postTitle") String title,
             @RequestPart("postContent") String content,
-            @RequestPart("placeId") Long placeId,
+            @RequestPart(value="placeId", required = false) Long placeId,
             @RequestPart(value = "postImages", required = false) List<MultipartFile> images){
 
         postService.savePostWithImages(title, content,placeId,images);
         return ResponseEntity.ok("등록 완료");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPostDetail(@PathVariable Long id){
+        return ResponseEntity.ok(postService.getPostDetail(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?>  updatePost(
+            @PathVariable Long id,
+            @RequestPart("postTitle") String postTitle,
+            @RequestPart("postContent") String postContent,
+            @RequestPart(value = "remainImages", required = false) String remainImagesJson,
+            @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages){
+
+        postService.updatePost(id,postTitle,postContent,
+                remainImagesJson,postImages);
+        return ResponseEntity.ok("수정 완료");
+
+
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id){
+        postService.deletePost(id);
+        return ResponseEntity.ok("삭제 완료");
     }
 
 }

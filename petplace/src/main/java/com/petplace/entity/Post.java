@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,6 +33,7 @@ public class Post {
     //post.getUser()를 호출하는 순간에 DB에서 진짜 User 정보를 조회
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 실제 FK 컬럼명
+    @org.hibernate.annotations.NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
     private User user;
 
     private String title ;
@@ -54,6 +56,7 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
+    @org.hibernate.annotations.NotFound(action = NotFoundAction.IGNORE)
     private Places place;
 
     @OneToMany(mappedBy="post", cascade = CascadeType.ALL,orphanRemoval = true)
