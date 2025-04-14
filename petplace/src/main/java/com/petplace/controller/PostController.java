@@ -17,9 +17,12 @@ public class PostController {
 
     // http://localhost:9000/api/community?page=1&size=10
     @GetMapping
-    public ResponseEntity<?> getPosts(@RequestParam int page,
+    public ResponseEntity<?> getPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(required = false) String search,
                                       @RequestParam(defaultValue = "10") int size) {
+        if (page < 0) {
+            page = 0;
+        }
 
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }

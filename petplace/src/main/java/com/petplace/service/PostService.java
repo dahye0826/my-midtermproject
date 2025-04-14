@@ -17,14 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
-
-import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +41,8 @@ public class PostService {
 
     // 게시글 목록 조회 (검색 + 페이징)
     public Page<PostResponseDto> getPosts(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+        int safePage = Math.max(page - 1, 0);
+        Pageable pageable = PageRequest.of(safePage, size, Sort.by("createdAt").descending());
 
         Page<Post> postPage;
         if (search != null && !search.trim().isEmpty()) {
