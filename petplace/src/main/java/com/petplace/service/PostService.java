@@ -76,17 +76,16 @@ public class PostService {
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content, Long placeId, List<MultipartFile> images) {
+    public void savePostWithImages(String title, String content,  String placeName, List<MultipartFile> images) {
+        System.out.println("🔍 받은 장소 이름: " + placeName); // ✅ 여기에 추가!
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
         post.setViewCount(0);
         post.setCommentCount(0);
 
-        if (placeId != null) {
-            Places place = placesRepository.findById(placeId)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 장소가 존재하지 않습니다: " + placeId));
-            post.setPlace(place);
+        if (placeName != null && !placeName.trim().isEmpty()) {
+            placesRepository.findByPlaceName(placeName).ifPresent(post::setPlace);
         }
 
         postRepository.save(post);
@@ -125,26 +124,36 @@ public class PostService {
         //Optional.ofNullable 널값 방지
         post.setViewCount(Optional.ofNullable(post.getViewCount()).orElse(0) + 1);
 
+        Places place = post.getPlace();
+        Long placeId = null;
+        String placeName = null;
+
+        if (place != null) {
+            placeId = place.getPlaceId();
+            placeName = place.getPlaceName();
+        }
+
+        System.out.println("🔍 받은 장소 이름: " + placeName); // ✅ 여기에 추가!
 
         return new PostResponseDto(
                 post.getPostId(),
                 post.getTitle(),
-                post.getUser() !=null? post.getUser().getUserName():"익명",
-                post.getCreatedAt().toLocalDate().toString(),
-                post.getUpdatedAt().toLocalDate().toString(),
+                post.getUser() != null ? post.getUser().getUserName() : "익명",
+                post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
+                post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
                 post.getViewCount(),
                 post.getCommentCount(),
                 post.getContent(),
                 post.getImages().stream()
                         .map(PostImage::getImageUrl)
                         .collect(Collectors.toList()),
-                post.getPlace() != null ? post.getPlace().getPlaceId() : null,
-                post.getPlace() != null ? post.getPlace().getPlaceName() : null
+                placeId,
+                placeName
 
         );
     }
     @Transactional
-    public void updatePost(Long id, String title, String content, String remainImagesJson, List<MultipartFile> newImages) {
+    public void updatePost(Long id, String title, String content, String remainImagesJson, List<MultipartFile> newImages, Long placeId) {
         // 1. 게시글 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시물 수정 실패: ID " + id));
@@ -152,6 +161,13 @@ public class PostService {
         // 2. 게시글 정보 수정
         post.setTitle(title);
         post.setContent(content);
+        if (placeId != null) {
+            Places place = placesRepository.findById(placeId)
+                    .orElseThrow(() -> new EntityNotFoundException("장소 없음: " + placeId));
+            post.setPlace(place);
+        } else {
+            post.setPlace(null); // 필요 시 null로 초기화
+        }
 
 
 
@@ -168,6 +184,7 @@ public class PostService {
         } else {
             finalRemainList = new ArrayList<>();
         }
+
 
         List<PostImage> updatedImages = post.getImages().stream()
                 .filter(img -> finalRemainList.contains(img.getImageUrl()))

@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor //생성자를 자동으로 만들어줌
 @RestController
 @RequestMapping("/api/community")
 public class PostController {
@@ -26,37 +26,40 @@ public class PostController {
 
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
-
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<?> createpost(
-            @RequestPart("postTitle") String title,
-            @RequestPart("postContent") String content,
-            @RequestPart(value="placeId", required = false) Long placeId,
-            @RequestPart(value = "postImages", required = false) List<MultipartFile> images){
-
-        postService.savePostWithImages(title, content,placeId,images);
-        return ResponseEntity.ok("등록 완료");
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostDetail(@PathVariable Long id){
         return ResponseEntity.ok(postService.getPostDetail(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?>  updatePost(
+
+    @PostMapping
+    public ResponseEntity<?> createpost(
+            @RequestParam("postTitle") String title,
+            @RequestParam("postContent") String content,
+            @RequestParam(required = false) String placeName,
+            @RequestParam(value = "postImages", required = false) List<MultipartFile> images){
+
+        postService.savePostWithImages(title, content,placeName,images);
+        return ResponseEntity.ok("등록 완료");
+    }
+
+
+
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updatePost(
             @PathVariable Long id,
             @RequestPart("postTitle") String postTitle,
             @RequestPart("postContent") String postContent,
             @RequestPart(value = "remainImages", required = false) String remainImagesJson,
-            @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages){
-
-        postService.updatePost(id,postTitle,postContent,
-                remainImagesJson,postImages);
+            @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages,
+            @RequestPart(value = "placeId", required = false) Long placeId
+    ) {
+        try{
+            postService.updatePost(id, postTitle, postContent, remainImagesJson, postImages, placeId);
+        }catch (Exception e){
+            System.out.println(e.getStackTrace());
+        }
         return ResponseEntity.ok("수정 완료");
-
-
-
     }
 
     @DeleteMapping("/{id}")

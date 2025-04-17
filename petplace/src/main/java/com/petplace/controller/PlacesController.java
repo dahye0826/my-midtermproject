@@ -1,22 +1,21 @@
 package com.petplace.controller;
 
 import com.petplace.dto.PlacesResponseDto;
+import com.petplace.entity.Places;
 import com.petplace.service.PlacesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/places")
 @RequiredArgsConstructor
 public class PlacesController {
-
+    @Autowired
     private final PlacesService placesService;
 
     @GetMapping
@@ -26,7 +25,7 @@ public class PlacesController {
             @RequestParam(required = false) String industry,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String district,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "9") int size) {  // Changed default size to 9 to match frontend
 
         Map<String, Object> response = placesService.getPlaces(search, industry, city, district, page, size);
         return ResponseEntity.ok(response);
@@ -37,4 +36,27 @@ public class PlacesController {
         PlacesResponseDto place = placesService.getPlaceById(placeId);
         return ResponseEntity.ok(place);
     }
+
+    // Add an endpoint to get cities for the dropdown
+    @GetMapping("/cities")
+    public ResponseEntity<List<String>> getAllCities() {
+        List<String> cities = placesService.getAllCities();
+        return ResponseEntity.ok(cities);
+    }
+
+    // Add an endpoint to get industries (categories) for the dropdown
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getAllCategories() {
+        List<String> categories = placesService.getAllIndustries();
+        return ResponseEntity.ok(categories);
+    }
+
+    // @RequestBody
+    // @PathVariable
+    @GetMapping("/find")
+    public ResponseEntity<Places> findPlace(@RequestParam(name = "placeName") String placeName) {
+        Places place = placesService.findPlace(placeName);
+        return ResponseEntity.ok(place);
+    }
+
 }

@@ -2,14 +2,13 @@ package com.petplace.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "places")
@@ -88,10 +87,29 @@ public class Places {
     @Column(name = "pet_extra_charge")
     private String petExtraCharge;
 
+    @Column(name = "pet_size")
+    private String petSize;
+
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<VisitedPlaces> visitedPlaces = new ArrayList<>();  // Changed from reviews to visitedPlaces
+
+    // Add method to get full address
+    @Transient
+    public String getFullAddress() {
+        StringBuilder address = new StringBuilder();
+        if (city != null) address.append(city).append(" ");
+        if (district != null) address.append(district).append(" ");
+        if (town != null) address.append(town).append(" ");
+        if (village != null) address.append(village).append(" ");
+        if (lotNumber != null) address.append(lotNumber);
+        return address.toString().trim();
+    }
 }

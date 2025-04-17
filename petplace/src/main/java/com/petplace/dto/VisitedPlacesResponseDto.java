@@ -21,7 +21,7 @@ public class VisitedPlacesResponseDto {
         return new VisitedPlacesResponseDto(
                 visitedPlace.getVisitId(),
                 visitedPlace.getUserId(),
-                visitedPlace.getPlaceId(),
+                visitedPlace.getPlace().getPlaceId(),
                 visitedPlace.getVisitDate().toString(),
                 visitedPlace.getRating(),
                 visitedPlace.getNote(),

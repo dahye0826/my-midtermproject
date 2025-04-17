@@ -1,23 +1,31 @@
 package com.petplace.service;
 
 import com.petplace.dto.PlacesResponseDto;
+import com.petplace.dto.VisitedPlacesResponseDto;
 import com.petplace.entity.Places;
+import com.petplace.entity.VisitedPlaces;
 import com.petplace.repository.PlacesRepository;
+import com.petplace.repository.VisitedPlacesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PlacesService {
 
     private final PlacesRepository placesRepository;
+    private final VisitedPlacesRepository visitedPlacesRepository;
 
     public Map<String, Object> getPlaces(String search, String industry, String city, String district, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("placeId").descending());
@@ -38,6 +46,30 @@ public class PlacesService {
     public PlacesResponseDto getPlaceById(Long placeId) {
         Places place = placesRepository.findById(placeId)
                 .orElseThrow(() -> new RuntimeException("Place not found with id: " + placeId));
-        return PlacesResponseDto.fromEntity(place);
+
+        PlacesResponseDto placeDto = PlacesResponseDto.fromEntity(place);
+
+        // Get visitedPlaces for this place and add them to the response
+        List<VisitedPlaces> visitedPlaces = visitedPlacesRepository.findByPlace_PlaceId(placeId);
+        placeDto.setVisitedPlaces(visitedPlaces.stream()
+                .map(VisitedPlacesResponseDto::fromEntity)
+                .collect(Collectors.toList()));
+
+        return placeDto;
     }
+
+    public List<String> getAllCities() {
+        return placesRepository.findDistinctCities();
+    }
+
+    public List<String> getAllIndustries() {
+        return placesRepository.findDistinctIndustries();
+    }
+
+    public Places findPlace(String placeName) {
+        return placesRepository.findByPlaceName(placeName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾을 수 없습니다."));
+    }
+
+
 }
