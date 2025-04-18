@@ -33,16 +33,24 @@ public class PostController {
 
 
     @PostMapping
-    public ResponseEntity<?> createpost(
+    public ResponseEntity<?> createPost(
             @RequestParam("postTitle") String title,
             @RequestParam("postContent") String content,
-            @RequestParam(required = false) String placeName,
-            @RequestParam(value = "postImages", required = false) List<MultipartFile> images){
-
-        postService.savePostWithImages(title, content,placeName,images);
+            @RequestParam(value = "placeId", required = false) Long placeId,
+            @RequestParam(value = "placeName", required = false) String placeName,
+            @RequestParam(value = "placeAddress", required = false) String placeAddress,
+            @RequestParam(value = "placeLat", required = false) Double placeLat,
+            @RequestParam(value = "placeLng", required = false) Double placeLng,
+            @RequestParam(value = "placeCategory", required = false) String placeCategory,
+            @RequestParam(value = "postImages", required = false) List<MultipartFile> images
+    ) {
+        postService.savePostWithImages(
+                title, content,
+                placeId, placeName, placeAddress, placeLat, placeLng, placeCategory,
+                images
+        );
         return ResponseEntity.ok("등록 완료");
     }
-
 
 
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")

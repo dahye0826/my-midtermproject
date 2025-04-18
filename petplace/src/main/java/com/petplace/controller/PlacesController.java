@@ -53,10 +53,14 @@ public class PlacesController {
 
     // @RequestBody
     // @PathVariable
-    @GetMapping("/find")
-    public ResponseEntity<Places> findPlace(@RequestParam(name = "placeName") String placeName) {
-        Places place = placesService.findPlace(placeName);
-        return ResponseEntity.ok(place);
+    @GetMapping("/nearby")
+    public ResponseEntity<List<Places>> findNearbyPlaces(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(defaultValue = "100") double radius // 반경 m 단위
+    ) {
+        List<Places> nearbyPlaces = placesService.findNearbyPlaces(lat, lng, radius);
+        return ResponseEntity.ok(nearbyPlaces);
     }
 
 }

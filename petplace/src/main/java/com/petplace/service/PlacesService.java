@@ -66,9 +66,8 @@ public class PlacesService {
         return placesRepository.findDistinctIndustries();
     }
 
-    public Places findPlace(String placeName) {
-        return placesRepository.findByPlaceName(placeName)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "장소를 찾을 수 없습니다."));
+    public List<Places> findNearbyPlaces(double lat, double lng, double radius) {
+        return placesRepository.findNearbyPlaces(lat, lng, radius);
     }
 
 

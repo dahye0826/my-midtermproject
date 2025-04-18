@@ -76,16 +76,28 @@ public class PostService {
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content,  String placeName, List<MultipartFile> images) {
-        System.out.println("🔍 받은 장소 이름: " + placeName); // ✅ 여기에 추가!
+    public void savePostWithImages(String title, String content,Long placeId,String placeName,String placeAddress,
+                                   Double placeLat, Double placeLng, String placeCategory,List<MultipartFile> images) {
+        System.out.println("🔍 받은 장소 이름: " + placeName);
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
         post.setViewCount(0);
         post.setCommentCount(0);
 
-        if (placeName != null && !placeName.trim().isEmpty()) {
-            placesRepository.findByPlaceName(placeName).ifPresent(post::setPlace);
+        if (placeId != null) {
+            Places place = placesRepository.findById(placeId).orElseThrow(() -> new RuntimeException("장소 없음"));
+            post.setPlace(place);
+        } else if (placeName != null) {
+            // 새 장소를 만들거나 저장하는 로직
+            Places newPlace = new Places();
+            newPlace.setPlaceName(placeName);
+            newPlace.setRoadAddress(placeAddress);
+            newPlace.setLatitude(placeLat);
+            newPlace.setLongitude(placeLng);
+            newPlace.setIndustrySub(placeCategory);
+            placesRepository.save(newPlace);
+            post.setPlace(newPlace);
         }
 
         postRepository.save(post);
