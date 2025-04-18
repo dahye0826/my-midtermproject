@@ -2,6 +2,7 @@ package com.petplace.controller;
 
 import com.petplace.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,23 +38,16 @@ public class PostController {
             @RequestParam("postTitle") String title,
             @RequestParam("postContent") String content,
             @RequestParam(value = "placeId", required = false) Long placeId,
-            @RequestParam(value = "placeName", required = false) String placeName,
-            @RequestParam(value = "placeAddress", required = false) String placeAddress,
-            @RequestParam(value = "placeLat", required = false) Double placeLat,
-            @RequestParam(value = "placeLng", required = false) Double placeLng,
-            @RequestParam(value = "placeCategory", required = false) String placeCategory,
             @RequestParam(value = "postImages", required = false) List<MultipartFile> images
     ) {
         postService.savePostWithImages(
-                title, content,
-                placeId, placeName, placeAddress, placeLat, placeLng, placeCategory,
-                images
+                title, content, placeId,images
         );
         return ResponseEntity.ok("등록 완료");
     }
 
 
-    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updatePost(
             @PathVariable Long id,
             @RequestPart("postTitle") String postTitle,
@@ -74,6 +68,19 @@ public class PostController {
     public ResponseEntity<?> deletePost(@PathVariable Long id){
         postService.deletePost(id);
         return ResponseEntity.ok("삭제 완료");
+    }
+
+    @PostMapping("/{id}/update")
+    public ResponseEntity<?> updatePostWithMultipart(
+            @PathVariable Long id,
+            @RequestParam("postTitle") String postTitle,
+            @RequestParam("postContent") String postContent,
+            @RequestParam(value = "remainImages", required = false) String remainImagesJson,
+            @RequestParam(value = "postImages", required = false) List<MultipartFile> postImages,
+            @RequestParam(value = "placeId", required = false) Long placeId
+    ) {
+        postService.updatePost(id, postTitle, postContent, remainImagesJson, postImages, placeId);
+        return ResponseEntity.ok("수정 완료");
     }
 
 }

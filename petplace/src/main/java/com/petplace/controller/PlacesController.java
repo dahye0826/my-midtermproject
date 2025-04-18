@@ -51,16 +51,13 @@ public class PlacesController {
         return ResponseEntity.ok(categories);
     }
 
-    // @RequestBody
-    // @PathVariable
-    @GetMapping("/nearby")
-    public ResponseEntity<List<Places>> findNearbyPlaces(
-            @RequestParam double lat,
-            @RequestParam double lng,
-            @RequestParam(defaultValue = "100") double radius // 반경 m 단위
-    ) {
-        List<Places> nearbyPlaces = placesService.findNearbyPlaces(lat, lng, radius);
-        return ResponseEntity.ok(nearbyPlaces);
+    @GetMapping("/search")
+    public ResponseEntity<List<PlacesResponseDto>> searchPlaces(@RequestParam String keyword){ List<PlacesResponseDto> result = placesService.searchPlaces(keyword);
+    return ResponseEntity.ok(result);}
+
+    @GetMapping("/all")
+    public List<Places> getAllPlaces(){
+        return placesService.getAllPlaces();
     }
 
 }

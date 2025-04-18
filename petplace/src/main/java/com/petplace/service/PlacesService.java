@@ -11,9 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,9 +64,16 @@ public class PlacesService {
         return placesRepository.findDistinctIndustries();
     }
 
-    public List<Places> findNearbyPlaces(double lat, double lng, double radius) {
-        return placesRepository.findNearbyPlaces(lat, lng, radius);
+    public List<PlacesResponseDto> searchPlaces(String keyword){
+        List<Places> places = placesRepository.findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(keyword, keyword);
+
+        return places.stream()
+                .map(PlacesResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
 
+    public List<Places> getAllPlaces() {
+        return placesRepository.findAll();
+    }
 }

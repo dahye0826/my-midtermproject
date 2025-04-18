@@ -76,30 +76,22 @@ public class PostService {
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content,Long placeId,String placeName,String placeAddress,
-                                   Double placeLat, Double placeLng, String placeCategory,List<MultipartFile> images) {
-        System.out.println("🔍 받은 장소 이름: " + placeName);
+    public void savePostWithImages(String title, String content,Long placeId, List<MultipartFile> images) {
+
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
         post.setViewCount(0);
         post.setCommentCount(0);
 
+        // 장소가 선택된 경우만 연결
         if (placeId != null) {
-            Places place = placesRepository.findById(placeId).orElseThrow(() -> new RuntimeException("장소 없음"));
+            Places place = placesRepository.findById(placeId)
+                    .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
             post.setPlace(place);
-        } else if (placeName != null) {
-            // 새 장소를 만들거나 저장하는 로직
-            Places newPlace = new Places();
-            newPlace.setPlaceName(placeName);
-            newPlace.setRoadAddress(placeAddress);
-            newPlace.setLatitude(placeLat);
-            newPlace.setLongitude(placeLng);
-            newPlace.setIndustrySub(placeCategory);
-            placesRepository.save(newPlace);
-            post.setPlace(newPlace);
         }
 
+        // 게시글 먼저 저장
         postRepository.save(post);
 
         String uploadDir = "C:/petImage/images/post/";
@@ -145,7 +137,6 @@ public class PostService {
             placeName = place.getPlaceName();
         }
 
-        System.out.println("🔍 받은 장소 이름: " + placeName); // ✅ 여기에 추가!
 
         return new PostResponseDto(
                 post.getPostId(),
@@ -177,8 +168,8 @@ public class PostService {
             Places place = placesRepository.findById(placeId)
                     .orElseThrow(() -> new EntityNotFoundException("장소 없음: " + placeId));
             post.setPlace(place);
-        } else {
-            post.setPlace(null); // 필요 시 null로 초기화
+        } else{
+            post.setPlace(null); // 선택한 장소가 없는 경우 장소 제거
         }
 
 

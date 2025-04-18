@@ -5,11 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PlacesRepository extends JpaRepository<Places, Long> {
@@ -33,19 +31,5 @@ public interface PlacesRepository extends JpaRepository<Places, Long> {
     @Query("SELECT DISTINCT p.industryMain FROM Places p WHERE p.industryMain IS NOT NULL ORDER BY p.industryMain")
     List<String> findDistinctIndustries();
 
-    @Query(value = """
-    SELECT *, 
-    (6371000 * acos(
-        cos(radians(:lat)) * cos(radians(p.latitude)) *
-        cos(radians(p.longitude) - radians(:lng)) +
-        sin(radians(:lat)) * sin(radians(p.latitude))
-    )) AS distance
-    FROM places p
-    HAVING distance <= :radius
-    ORDER BY distance
-    """, nativeQuery = true)
-    List<Places> findNearbyPlaces(@Param("lat") double lat,
-                                  @Param("lng") double lng,
-                                  @Param("radius") double radius);
+    List<Places> findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(String placeName, String roadAddress);
 }
-
