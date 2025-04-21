@@ -2,7 +2,6 @@ package com.petplace.controller;
 
 import com.petplace.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +26,7 @@ public class PostController {
 
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostDetail(@PathVariable Long id){
         return ResponseEntity.ok(postService.getPostDetail(id));
@@ -46,23 +46,6 @@ public class PostController {
         return ResponseEntity.ok("등록 완료");
     }
 
-
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updatePost(
-            @PathVariable Long id,
-            @RequestPart("postTitle") String postTitle,
-            @RequestPart("postContent") String postContent,
-            @RequestPart(value = "remainImages", required = false) String remainImagesJson,
-            @RequestPart(value = "postImages", required = false) List<MultipartFile> postImages,
-            @RequestPart(value = "placeId", required = false) Long placeId
-    ) {
-        try{
-            postService.updatePost(id, postTitle, postContent, remainImagesJson, postImages, placeId);
-        }catch (Exception e){
-            System.out.println(e.getStackTrace());
-        }
-        return ResponseEntity.ok("수정 완료");
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id){
