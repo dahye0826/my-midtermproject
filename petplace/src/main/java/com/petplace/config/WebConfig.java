@@ -21,6 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000") //프론트 포트
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                 .allowedHeaders("*")
-                ;
+                 .allowCredentials(true)
+                .maxAge(3600);
+;
     }
 }

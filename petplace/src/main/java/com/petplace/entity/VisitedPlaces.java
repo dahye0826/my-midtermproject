@@ -16,10 +16,10 @@ public class VisitedPlaces {
     @Column(name = "visit_id")
     private Long visitId;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    // Changed from placeId field to relationship with Places entity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Places place;
@@ -33,4 +33,8 @@ public class VisitedPlaces {
 
     @Column(name = "created_at")
     private LocalDate createdAt;
+
 }
+//바꾼것들
+//VisitedPlaces
+//place

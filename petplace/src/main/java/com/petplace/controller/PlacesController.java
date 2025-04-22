@@ -4,7 +4,6 @@ import com.petplace.dto.PlacesResponseDto;
 import com.petplace.entity.Places;
 import com.petplace.service.PlacesService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +14,6 @@ import java.util.Map;
 @RequestMapping("/api/places")
 @RequiredArgsConstructor
 public class PlacesController {
-    @Autowired
     private final PlacesService placesService;
 
     @GetMapping
@@ -25,39 +23,34 @@ public class PlacesController {
             @RequestParam(required = false) String industry,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String district,
-            @RequestParam(defaultValue = "9") int size) {  // Changed default size to 9 to match frontend
-
-        Map<String, Object> response = placesService.getPlaces(search, industry, city, district, page, size);
-        return ResponseEntity.ok(response);
+            @RequestParam(required = false) String petSize,
+            @RequestParam(defaultValue = "9") int size) {
+        return ResponseEntity.ok(placesService.getPlaces(search, industry, city, district, petSize, page, size));
     }
 
     @GetMapping("/{placeId}")
     public ResponseEntity<PlacesResponseDto> getPlaceById(@PathVariable Long placeId) {
-        PlacesResponseDto place = placesService.getPlaceById(placeId);
-        return ResponseEntity.ok(place);
+        return ResponseEntity.ok(placesService.getPlaceById(placeId));
     }
 
-    // Add an endpoint to get cities for the dropdown
     @GetMapping("/cities")
     public ResponseEntity<List<String>> getAllCities() {
-        List<String> cities = placesService.getAllCities();
-        return ResponseEntity.ok(cities);
+        return ResponseEntity.ok(placesService.getAllCities());
     }
 
-    // Add an endpoint to get industries (categories) for the dropdown
     @GetMapping("/categories")
     public ResponseEntity<List<String>> getAllCategories() {
-        List<String> categories = placesService.getAllIndustries();
-        return ResponseEntity.ok(categories);
+        return ResponseEntity.ok(placesService.getAllIndustries());
+    }
+    //유다혜
+    @GetMapping("/all")
+    public List<Places> getAllPlaces(){
+       return placesService.getAllPlaces();
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<PlacesResponseDto>> searchPlaces(@RequestParam String keyword){ List<PlacesResponseDto> result = placesService.searchPlaces(keyword);
-    return ResponseEntity.ok(result);}
-
-    @GetMapping("/all")
-    public List<Places> getAllPlaces(){
-        return placesService.getAllPlaces();
+    public List<Places> searchPlaces(@RequestParam String keyword) {
+        return placesService.searchPlacesByKeyword(keyword);
     }
 
 }

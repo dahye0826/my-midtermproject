@@ -99,9 +99,8 @@ public class Places {
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<VisitedPlaces> visitedPlaces = new ArrayList<>();  // Changed from reviews to visitedPlaces
+    private List<VisitedPlaces> visitedPlaces = new ArrayList<>();
 
-    // Add method to get full address
     @Transient
     public String getFullAddress() {
         StringBuilder address = new StringBuilder();

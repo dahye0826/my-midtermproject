@@ -1,24 +1,27 @@
 package com.petplace.repository;
 
+
 import com.petplace.entity.VisitedPlaces;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface VisitedPlacesRepository extends JpaRepository<VisitedPlaces, Long> {
 
-    Page<VisitedPlaces> findByUserId(String userId, Pageable pageable);
-
-    // Added this method to match what's needed in PlacesService
+    //남궁현,이준일
     List<VisitedPlaces> findByPlace_PlaceId(Long placeId);
+    Page<VisitedPlaces> findByUser_UserId(Long userId, Pageable pageable);
+    //박병규
+    List<VisitedPlaces> findAllByPlace_PlaceId(Long placeId);
 
-    @Query("SELECT v FROM VisitedPlaces v WHERE " +
-            "(:userId IS NULL OR v.userId = :userId) AND " +
-            "(:placeId IS NULL OR v.place.placeId = :placeId)")
-    Page<VisitedPlaces> findVisitedPlacesWithFilters(Long userId, Long placeId, Pageable pageable);
+
+    Page<VisitedPlaces> findByPlace_PlaceId(Long placeId, Pageable pageable);
+    //수정
+    long countByUser_UserId(Long userId);
+    //수정
+    Optional<VisitedPlaces> findByUser_UserIdAndPlace_PlaceId(Long userId, Long placeId);
 }
+
