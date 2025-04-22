@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
- // 깃 테승트 -- 이준일
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
