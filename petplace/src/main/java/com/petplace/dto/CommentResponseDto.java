@@ -19,7 +19,7 @@ public class CommentResponseDto {
     private LocalDateTime  updatedAt;
     private Long userId;
     private Long postId;
-    private String username;
+    private String userName;
 
 
 
@@ -28,17 +28,9 @@ public class CommentResponseDto {
             this.content = comment.getContent();
             this.createdAt = comment.getCreatedAt();
             this.updatedAt = comment.getUpdatedAt();
-//            this.userId = comment.getUser().getUserId();
-            this.postId = comment.getPost().getPostId();
-//            this.username = comment.getUser().getUserName();
-        if (comment.getUser() != null) {
             this.userId = comment.getUser().getUserId();
-            this.username = comment.getUser().getUserName();
-        } else {
-            this.userId = null;
-            this.username = "익명";
-        }
-
+            this.postId = comment.getPost().getPostId();
+            this.userName = comment.getUser().getUserName();
         }
 
 
