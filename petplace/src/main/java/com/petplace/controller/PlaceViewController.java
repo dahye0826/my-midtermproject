@@ -22,7 +22,7 @@ public class PlaceViewController {
     private final PlaceViewService placeViewService;
     private final RecommendationService recommendationService;
 
-    @PostMapping("/place-view")
+    @PostMapping("/place-views")
     public ResponseEntity<?> trackPlaceView(@RequestBody PlaceViewRequestDto request) {
         System.out.println("Received place view request: " + request);
         placeViewService.savePlaceView(request);

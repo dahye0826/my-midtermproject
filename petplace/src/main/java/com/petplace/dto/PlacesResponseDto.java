@@ -51,15 +51,15 @@ public class PlacesResponseDto {
         dto.setIndoor(place.getIndoor());
         dto.setOutdoor(place.getOutdoor());
         dto.setDescription(place.getDescription());
-
-        if (place.getLastUpdated() != null) {
-            dto.setLastUpdated(place.getLastUpdated().toLocalDate().toString());
-        }
-
         dto.setParkingAvailable(place.getParkingAvailable());
         dto.setAdmissionFee(place.getAdmissionFee());
         dto.setPlacePhone(place.getPlacePhone());
         dto.setPetSize(place.getPetSize());
+
+        // Format last updated date if available
+        if (place.getLastUpdated() != null) {
+            dto.setLastUpdated(place.getLastUpdated().toLocalDate().toString());
+        }
 
         return dto;
     }
