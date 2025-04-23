@@ -19,27 +19,34 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepository;
 
+    @Transactional
     public Map<String, Object> login(LoginRequestDto loginRequestDto) {
         Map<String, Object> response = new HashMap<>();
 
-        Optional<User> userOptional = userRepository.findByEmail(loginRequestDto.getEmail());
+        try {
+            Optional<User> userOptional = userRepository.findByEmail(loginRequestDto.getEmail());
 
-        if (userOptional.isPresent() && userOptional.get().getPassword().equals(loginRequestDto.getPassword())) {
-            User user = userOptional.get();
+            if (userOptional.isPresent() && userOptional.get().getPassword().equals(loginRequestDto.getPassword())) {
+                User user = userOptional.get();
 
-            response.put("success", true);
-            response.put("userId", user.getUserId());
-            response.put("userName", user.getUserName());
-            response.put("email", user.getEmail());
-            response.put("role", user.getRole());
-            response.put("profile", user.getProfile());
+                response.put("success", true);
+                response.put("userId", user.getUserId());
+                response.put("userName", user.getUserName());
+                response.put("email", user.getEmail());
+                response.put("role", user.getRole());
+                response.put("profile", user.getProfile());
 
-        } else {
+            } else {
+                response.put("success", false);
+                response.put("message", "이메일 또는 비밀번호가 일치하지 않습니다.");
+            }
+
+            return response;
+        } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "이메일 또는 비밀번호가 일치하지 않습니다.");
+            response.put("message", "로그인 처리 중 오류가 발생했습니다: " + e.getMessage());
+            return response;
         }
-
-        return response;
     }
 
     @Transactional

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Getter @Setter @NoArgsConstructor
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", length = 20)
     private Long userId;
 
