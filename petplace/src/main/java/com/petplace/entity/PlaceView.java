@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,19 +21,16 @@ public class PlaceView {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
     @JsonIgnore
-    private Places placeId;
+    private Places place; // Renamed from placeId for clarity
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private User userId;
-
+    private User user; // Renamed from userId for clarity
 
     @Column(name = "viewed_at", nullable = false)
     private LocalDateTime viewedAt;
 
     @Column(name = "time_spent", nullable = false)
-    private Long timeSpent; // 초 단위
-
-
+    private Long timeSpent; // Time in seconds
 }

@@ -12,8 +12,8 @@ import java.util.List;
 
 @Repository
 public interface PlaceViewRepository extends JpaRepository<PlaceView, Long> {
-    // 추후 사용자별 추천용으로 확장 가능
-    List<PlaceView> findTop3ByUserId_UserIdOrderByViewedAtDesc(Long userId);
+    // Method renamed to match new field names in PlaceView entity
+    List<PlaceView> findTop3ByUser_UserIdOrderByViewedAtDesc(Long userId);
 
     @Query("SELECT p FROM Places p WHERE " +
             "(:indoor IS NULL OR p.indoor = :indoor) AND " +
