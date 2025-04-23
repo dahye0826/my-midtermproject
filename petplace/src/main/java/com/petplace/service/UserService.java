@@ -77,18 +77,22 @@ public class UserService {
                             .map(PostImage::getImageUrl)
                             .collect(Collectors.toList());
 
+                    Long placeId = post.getPlace() != null ? post.getPlace().getPlaceId() : null;
+                    String placeName = post.getPlace() != null ? post.getPlace().getPlaceName() : null;
+
                     return new PostResponseDto(
                             post.getPostId(),
                             post.getTitle(),
-                            post.getUser() != null ? post.getUser().getUserName() : "익명",
+                            post.getUser().getUserId(),
+                            post.getUser().getUserName(),
                             post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
                             post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
                             post.getViewCount(),
                             post.getCommentCount(),
                             post.getContent(),
                             imageUrls,
-                            post.getPlace() != null ? post.getPlace().getPlaceId() : null,
-                            post.getPlace() != null ? post.getPlace().getPlaceName() : null
+                            placeId,
+                            placeName
                     );
                 })
                 .collect(Collectors.toList());

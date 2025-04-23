@@ -11,6 +11,7 @@ import java.util.List;
 public class PostResponseDto {
     private Long postId;
     private String title;
+    private Long userId;
     private String userName;
     private String  createdAt;
     private String updatedAt; //수정

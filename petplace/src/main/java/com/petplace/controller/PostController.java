@@ -37,11 +37,12 @@ public class PostController {
     public ResponseEntity<?> createPost(
             @RequestParam("postTitle") String title,
             @RequestParam("postContent") String content,
+            @RequestParam("userId") Long userId,
             @RequestParam(value = "placeId", required = false) Long placeId,
             @RequestParam(value = "postImages", required = false) List<MultipartFile> images
     ) {
         postService.savePostWithImages(
-                title, content, placeId,images
+                title, content,userId, placeId,images
         );
         return ResponseEntity.ok("등록 완료");
     }
@@ -58,11 +59,12 @@ public class PostController {
             @PathVariable Long id,
             @RequestParam("postTitle") String postTitle,
             @RequestParam("postContent") String postContent,
+            @RequestParam("userId") Long userId,
             @RequestParam(value = "remainImages", required = false) String remainImagesJson,
             @RequestParam(value = "postImages", required = false) List<MultipartFile> postImages,
             @RequestParam(value = "placeId", required = false) Long placeId
     ) {
-        postService.updatePost(id, postTitle, postContent, remainImagesJson, postImages, placeId);
+        postService.updatePost(id, postTitle, postContent,userId, remainImagesJson, postImages, placeId);
         return ResponseEntity.ok("수정 완료");
     }
 
