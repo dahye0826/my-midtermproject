@@ -104,11 +104,11 @@ public class Places {
     @Transient
     public String getFullAddress() {
         StringBuilder address = new StringBuilder();
-        if (city != null) address.append(city).append(" ");
-        if (district != null) address.append(district).append(" ");
-        if (town != null) address.append(town).append(" ");
-        if (village != null) address.append(village).append(" ");
-        if (lotNumber != null) address.append(lotNumber);
+        if (city != null && !city.isEmpty()) address.append(city).append(" ");
+        if (district != null && !district.isEmpty()) address.append(district).append(" ");
+        if (town != null && !town.isEmpty()) address.append(town).append(" ");
+        if (village != null && !village.isEmpty()) address.append(village).append(" ");
+        if (lotNumber != null && !lotNumber.isEmpty()) address.append(lotNumber);
         return address.toString().trim();
     }
 }

@@ -42,7 +42,7 @@ public class PlacesService {
         response.put("currentPage", placesPage.getNumber() + 1);
         response.put("totalItems", placesPage.getTotalElements());
         response.put("totalPages", placesPage.getTotalPages());
-        response.put("totalCount", placesPage.getTotalElements());
+        response.put("totalCount", placesPage.getTotalElements()); // Duplicate of totalItems
 
         return response;
     }
@@ -51,21 +51,9 @@ public class PlacesService {
         Places place = placesRepository.findById(placeId)
                 .orElseThrow(() -> new RuntimeException("Place not found with id: " + placeId));
 
-
         PlacesResponseDto placeDto = PlacesResponseDto.fromEntity(place);
-        List<VisitedPlaces> visitedPlaces = visitedPlacesRepository.findAllByPlace_PlaceId(placeId);
 
-
-        List<PlaceVisitedInfoDto> result = visitedPlaces.stream()
-                .map(PlaceVisitedInfoDto::fromEntity)
-                .collect(Collectors.toList());
-//박병규 오류나서 visitedPlacesdto-> PlaceVisitedInfoDto 로 바꿈(PlaceVisitedInfoDto 파일 생성)
-//        문제 없으면 지워주세요
-//        List<VisitedPlaces> visitedPlaces = visitedPlacesRepository.findAllByPlace_PlaceId(placeId);
-//        placeDto.setVisitedPlaces(visitedPlaces.stream()
-//                .map(visitedPlacesDto::fromEntity)
-//                .collect(Collectors.toList()));
-
+        // Set pet size categories if available
         if (place.getPetSize() != null) {
             placeDto.setPetSizeCategories(petSizeClassificationService.getPetSizeCategories(place.getPetSize()));
         }
@@ -81,14 +69,10 @@ public class PlacesService {
         return placesRepository.findDistinctIndustries();
     }
 
-    //유다혜
     public List<Places> getAllPlaces() {
-
-        List<Places> list = placesRepository.findAll();
         return placesRepository.findAll();
     }
 
-    //유다혜
     public List<Places> searchPlacesByKeyword(String keyword) {
         return placesRepository.findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(keyword, keyword);
     }

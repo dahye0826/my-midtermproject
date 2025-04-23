@@ -24,13 +24,13 @@ public class PlaceViewService {
     private final UserRepository userRepository;
 
     public List<RecommendationRequestDto.RecentViewDto> getRecentViewDtos(Long userId) {
-        List<PlaceView> recentViews = placeViewRepository.findTop3ByUserId_UserIdOrderByViewedAtDesc(userId);
+        List<PlaceView> recentViews = placeViewRepository.findTop3ByUser_UserIdOrderByViewedAtDesc(userId);
 
         return recentViews.stream().map(view -> {
             RecommendationRequestDto.RecentViewDto dto = new RecommendationRequestDto.RecentViewDto();
-            Long placeId = view.getPlaceId().getPlaceId();
+            Long placeId = view.getPlace().getPlaceId();
             dto.setPlaceId(placeId);
-            dto.setCity(view.getPlaceId().getCity());
+            dto.setCity(view.getPlace().getCity());
             return dto;
         }).toList();
     }
@@ -38,12 +38,6 @@ public class PlaceViewService {
     @Transactional
     public void savePlaceView(PlaceViewRequestDto request) {
         System.out.println(" [요청 수신] userId: " + request.getUserId() + ", placeId: " + request.getPlaceId());
-
-        // ✅ userId가 null이면 저장 안 함 (비회원)
-//        if (request.getUserId() == null) {
-//            System.out.println(" [저장 생략] 비회원이므로 기록하지 않습니다.");
-//            return;
-//        }
 
         Places place = placeRepository.findById(request.getPlaceId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 장소가 존재하지 않습니다."));
@@ -57,15 +51,12 @@ public class PlaceViewService {
         System.out.println(" [유저 조회 성공] userId: " + user.getUserId());
 
         PlaceView placeView = new PlaceView();
-        placeView.setPlaceId(place);
-        placeView.setUserId(user);
+        placeView.setPlace(place);
+        placeView.setUser(user);
         placeView.setViewedAt(request.getViewedAt() != null ? request.getViewedAt() : LocalDateTime.now());
         placeView.setTimeSpent(request.getTimeSpent());
 
         placeViewRepository.save(placeView);
         System.out.println(" [저장 완료] 로그인 유저의 placeView 저장됨!");
     }
-
-
-
 }
