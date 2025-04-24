@@ -7,9 +7,11 @@ import com.petplace.dto.PostResponseDto;
 import com.petplace.entity.Places;
 import com.petplace.entity.Post;
 import com.petplace.entity.PostImage;
+import com.petplace.entity.User;
 import com.petplace.repository.PlacesRepository;
 import com.petplace.repository.PostImageRepository;
 import com.petplace.repository.PostRepository;
+import com.petplace.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +38,11 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final PlacesRepository placesRepository;
-
+    private final UserRepository userRepository;
 
 
     // 게시글 목록 조회 (검색 + 페이징)
+    @Transactional
     public Page<PostResponseDto> getPosts(String search, int page, int size) {
         int safePage = Math.max(page - 1, 0);
         Pageable pageable = PageRequest.of(safePage, size, Sort.by("createdAt").descending());
@@ -52,37 +55,42 @@ public class PostService {
         }
 
 
-
-
         return postPage.map(post ->
-        {List<String> imageUrls = post.getImages().stream()
-                        .map(PostImage::getImageUrl)
-                        .collect(Collectors.toList());
-           return new PostResponseDto(
-                post.getPostId(),
-                post.getTitle(),
-                //post.getUser().getUserName(),
-                post.getUser() != null ? post.getUser().getUserName() : "익명",
-                post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
-                post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
-                post.getViewCount(),
-                post.getCommentCount(),
-                post.getContent(),
-                imageUrls,
-                post.getPlace() != null ? post.getPlace().getPlaceId() : null,
-                post.getPlace() != null ? post.getPlace().getPlaceName() : null
-         );
+        {
+            List<String> imageUrls = post.getImages().stream()
+                    .map(PostImage::getImageUrl)
+                    .collect(Collectors.toList());
+            return new PostResponseDto(
+                    post.getPostId(),
+                    post.getTitle(),
+                    post.getUser().getUserId(),
+                    post.getUser().getUserName(),
+                    post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
+                    post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
+                    post.getViewCount(),
+                    post.getCommentCount(),
+                    post.getContent(),
+                    imageUrls,
+                    post.getPlace() != null ? post.getPlace().getPlaceId() : null,
+                    post.getPlace() != null ? post.getPlace().getPlaceName() : null
+            );
         });
     }
 
     // 게시글 + 이미지 저장
-    public void savePostWithImages(String title, String content,Long placeId, List<MultipartFile> images) {
+    public void savePostWithImages(String title, String content, Long userId, Long placeId, List<MultipartFile> images) {
 
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
         post.setViewCount(0);
         post.setCommentCount(0);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        post.setUser(user);
+
+
 
         // 장소가 선택된 경우만 연결
         if (placeId != null) {
@@ -123,7 +131,7 @@ public class PostService {
     public PostResponseDto getPostDetail(Long id) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("해당 게시글이 없습니다: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글이 없습니다: " + id));
 
         //Optional.ofNullable 널값 방지
         post.setViewCount(Optional.ofNullable(post.getViewCount()).orElse(0) + 1);
@@ -141,7 +149,8 @@ public class PostService {
         return new PostResponseDto(
                 post.getPostId(),
                 post.getTitle(),
-                post.getUser() != null ? post.getUser().getUserName() : "익명",
+                post.getUser().getUserId(),
+                post.getUser().getUserName(),
                 post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
                 post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
                 post.getViewCount(),
@@ -155,8 +164,9 @@ public class PostService {
 
         );
     }
+
     @Transactional
-    public void updatePost(Long id, String title, String content, String remainImagesJson, List<MultipartFile> newImages, Long placeId) {
+    public void updatePost(Long id, String title, String content, Long userId, String remainImagesJson, List<MultipartFile> newImages, Long placeId) {
         // 1. 게시글 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시물 수정 실패: ID " + id));
@@ -168,10 +178,13 @@ public class PostService {
             Places place = placesRepository.findById(placeId)
                     .orElseThrow(() -> new EntityNotFoundException("장소 없음: " + placeId));
             post.setPlace(place);
-        } else{
+        } else {
             post.setPlace(null); // 선택한 장소가 없는 경우 장소 제거
         }
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        post.setUser(user);
 
 
         // 3. 기존 이미지 중 유지할 이미지 필터링
@@ -180,7 +193,8 @@ public class PostService {
         if (remainImagesJson != null) {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                finalRemainList = mapper.readValue(remainImagesJson, new TypeReference<List<String>>() {});
+                finalRemainList = mapper.readValue(remainImagesJson, new TypeReference<List<String>>() {
+                });
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("이미지 파싱 오류", e);
             }
@@ -222,15 +236,15 @@ public class PostService {
 
 
     @Transactional
-    public void deletePost(Long id){
+    public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다: " + id));
         postRepository.delete(post);
 
-        }
-
-
     }
+
+
+}
 
 
 

@@ -29,7 +29,8 @@ public class commentController {
             @RequestBody Map<String, String> request
     ) {
         String content = request.get("content");
-        Comment updatedComment = commentService.updateComment(commentId, content);
+        Long userId =Long.valueOf(request.get("userId"));
+        Comment updatedComment = commentService.updateComment(commentId, content, userId);
 
         return ResponseEntity.ok(new CommentResponseDto(updatedComment));
     }
@@ -44,16 +45,17 @@ public class commentController {
     @PostMapping
     public ResponseEntity<CommentResponseDto> addComment(
            @RequestBody Map<String, Object> request
-    ){
+    ) {
 
         Long postId = Long.valueOf(request.get("postId").toString());
         String content = request.get("content").toString();
-//        String userName = request.get("username").toString();
+        Long userId = Long.valueOf(request.get("userId").toString());
 
 
-        CommentResponseDto saved = commentService.createComment(postId, content);
+
+        CommentResponseDto saved = commentService.createComment(postId, content,userId);
         return ResponseEntity.ok(saved);
-        }
+    }
 
 
 

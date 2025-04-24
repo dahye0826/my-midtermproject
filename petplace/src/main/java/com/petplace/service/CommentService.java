@@ -3,6 +3,7 @@ package com.petplace.service;
 import com.petplace.dto.CommentResponseDto;
 import com.petplace.entity.Comment;
 import com.petplace.entity.Post;
+import com.petplace.entity.User;
 import com.petplace.repository.CommentRepository;
 import com.petplace.repository.PostRepository;
 import com.petplace.repository.UserRepository;
@@ -38,10 +39,13 @@ public class CommentService {
 
     }
 
-    public Comment updateComment(Long commentId, String content) {
+    public Comment updateComment(Long commentId, String content, Long userId) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(()->new IllegalArgumentException("댓글 없음"));
         comment.setContent(content);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("사용자가 존재하지 않습니다"));
 
         return commentRepository.save(comment);
 
@@ -57,17 +61,18 @@ public class CommentService {
 
 
     @Transactional
-    public CommentResponseDto createComment(Long postId, String content) {
+    public CommentResponseDto createComment(Long postId, String content, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
         // 임시 사용자 생성 또는 조회 (실제 환경에서는 userRepository로 조회)
-//        User user = userRepository.findByUserName(userName)
-//                .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
 
         Comment comment = Comment.builder()
                 .content(content)
                 .post(post)
+                .user(user)
                 .build();
 
         Comment saved = commentRepository.save(comment);

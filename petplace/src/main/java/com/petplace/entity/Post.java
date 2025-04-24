@@ -34,7 +34,6 @@ public class Post extends BaseEntity {
     // 단점이 무엇인가? 이거는 공부하세요
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 실제 FK 컬럼명
-    @NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
     private User user;
 
     private String title ;
