@@ -13,6 +13,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/post/**")
                 .addResourceLocations("file:///C:/petImage/images/post/");
+
+        // 장소 이미지를 위한 리소스 핸들러 추가
+        registry.addResourceHandler("/images/places/**")
+                .addResourceLocations("classpath:/static/images/places/")
+                .setCachePeriod(3600)
+                .resourceChain(true);
     }
 
     @Override
@@ -21,8 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000") //프론트 포트
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                 .allowedHeaders("*")
-                 .allowCredentials(true)
+                .allowCredentials(true)
                 .maxAge(3600);
-;
     }
 }

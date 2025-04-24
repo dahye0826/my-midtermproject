@@ -38,7 +38,11 @@ public class PlacesResponseDto {
         dto.setPlaceId(place.getPlaceId());
         dto.setPlaceName(place.getPlaceName());
         dto.setPlaceImage(place.getPlaceImage());
-        dto.setIndustryMain(place.getIndustryMain());
+
+        // Use industrySub instead of industryMain for category display
+        // This will show the specific category (카페, 식당, etc.) instead of "반려동물업"
+        dto.setIndustryMain(place.getIndustrySub() != null ? place.getIndustrySub() : place.getIndustryMain());
+
         dto.setCity(place.getCity());
         dto.setDistrict(place.getDistrict());
         dto.setRoadAddress(place.getRoadAddress());
