@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -65,6 +66,17 @@ public class PlacesResponseDto {
             dto.setLastUpdated(place.getLastUpdated().toLocalDate().toString());
         }
 
+        // 방문 기록 추가
+        if (place.getVisitedPlaces() != null) {
+            dto.setVisitedPlaces(
+                place.getVisitedPlaces().stream()
+                    .map(visit -> VisitedPlacesResponseDto.fromEntity(
+                        visit, 
+                        visit.getUser().getUserName()
+                    ))
+                    .collect(Collectors.toList())
+            );
+        }
         return dto;
     }
 }

@@ -108,24 +108,17 @@ public class VisitedPlacesService {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다. ID: " + requestDto.getUserId()));
 
-        Optional<VisitedPlaces> existingVisit = visitedPlacesRepository
-                .findByUser_UserIdAndPlace_PlaceId(requestDto.getUserId(), requestDto.getPlaceId());
-
-        VisitedPlaces visitedPlace;
-
-        if (existingVisit.isPresent()) {
-            visitedPlace = existingVisit.get();
-            updateVisitedPlaceFields(visitedPlace, requestDto);
-        } else {
-            visitedPlace = new VisitedPlaces();
-            visitedPlace.setUser(user);
-            visitedPlace.setPlace(place);
-            updateVisitedPlaceFields(visitedPlace, requestDto);
-            visitedPlace.setCreatedAt(LocalDate.now());
-        }
+        // Always create a new visit record
+        VisitedPlaces visitedPlace = new VisitedPlaces();
+        visitedPlace.setUser(user);
+        visitedPlace.setPlace(place);
+        visitedPlace.setVisitDate(LocalDate.parse(requestDto.getVisitDate()));
+        visitedPlace.setRating(requestDto.getRating());
+        visitedPlace.setNote(requestDto.getNote());
+        visitedPlace.setCreatedAt(LocalDate.now());
 
         VisitedPlaces saved = visitedPlacesRepository.save(visitedPlace);
-        String userName = saved.getUser().getUserName(); // fromEntity 오류나서 수정 userName까지 넣어야 fromEntity 오류 안 남
+        String userName = saved.getUser().getUserName();
 
         return VisitedPlacesResponseDto.fromEntity(saved, userName);
     }
