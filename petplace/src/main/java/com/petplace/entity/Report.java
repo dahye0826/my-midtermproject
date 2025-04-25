@@ -1,40 +1,41 @@
 package com.petplace.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import com.petplace.constant.TargetType;
+import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import lombok.*;
+
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "report")
 @Getter @Setter @NoArgsConstructor
-public class Report {
+public class Report{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id", length = 10)
+    @Column(name = "report_id")
     private Long reportId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "target_type", length = 20)
-    private String targetType;
+    private TargetType targetType;
 
-    @Column(name = "post_id", length = 10)
-    private Long postId;
+    @Column(name = "target_id")
+    private Long targetId;
 
-    @Column(length = 255)
+    @Column(length = 50)
     private String reason;
 
-    @Column(length = 5)
+    @Column
     private Integer count;
 
     @Column(name = "user_id", length = 20)
     private Long userId;
-
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
+
+
 }

@@ -20,8 +20,8 @@ public class ReportResponseDto {
     public static ReportResponseDto fromEntity(Report report) {
         return new ReportResponseDto(
                 report.getReportId(),
-                report.getTargetType(),
-                report.getPostId(),
+                report.getTargetType().name(),
+                report.getTargetId(),
                 report.getReason(),
                 report.getCount(),
                 report.getUserId(),
