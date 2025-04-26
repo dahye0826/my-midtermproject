@@ -3,15 +3,10 @@ package com.petplace.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.petplace.constant.TargetType;
 import com.petplace.dto.PostResponseDto;
-import com.petplace.entity.Places;
-import com.petplace.entity.Post;
-import com.petplace.entity.PostImage;
-import com.petplace.entity.User;
-import com.petplace.repository.PlacesRepository;
-import com.petplace.repository.PostImageRepository;
-import com.petplace.repository.PostRepository;
-import com.petplace.repository.UserRepository;
+import com.petplace.entity.*;
+import com.petplace.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +34,8 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final PlacesRepository placesRepository;
     private final UserRepository userRepository;
+    private final ReportService reportService;
+    private final CommentRepository commentRepository ;
 
 
     // 게시글 목록 조회 (검색 + 페이징)
@@ -239,6 +236,19 @@ public class PostService {
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다: " + id));
+
+        List<Comment> comments = commentRepository.findByPost_PostId(id);
+        // 2. 댓글 각각에 대해 신고 삭제
+        for (Comment comment : comments) {
+            reportService.deleteAllByTargetTypeAndTargetId(TargetType.COMMENT, comment.getCommentId());
+        }
+
+        // 3. 게시글(Post) 신고도 삭제
+        reportService.deleteAllByTargetTypeAndTargetId(TargetType.POST, id);
+
+        // 4. 이제 댓글 삭제
+        commentRepository.deleteAll(comments);
+
         postRepository.delete(post);
 
     }

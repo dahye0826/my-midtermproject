@@ -1,5 +1,6 @@
 package com.petplace.service;
 
+import com.petplace.constant.TargetType;
 import com.petplace.dto.VisitedPlacesRequestDto;
 
 import com.petplace.dto.VisitedPlacesResponseDto;
@@ -36,6 +37,7 @@ public class VisitedPlacesService {
     private final PlacesRepository placesRepository ;
     private final VisitedPlacesRepository visitedPlacesRepository;
     private final UserRepository userRepository;
+    private final ReportService reportService;
 
     public List<VisitedPlacesResponseDto> getVisitedPlacesByPlaceId(Long placeId) {
         List<VisitedPlaces> visitedPlaces = visitedPlacesRepository.findByPlace_PlaceId(placeId);
@@ -161,6 +163,7 @@ public class VisitedPlacesService {
         VisitedPlaces visitedPlace = visitedPlacesRepository.findById(visitId)
                 .orElseThrow(() -> new RuntimeException("방문 이력을 찾을 수 없습니다. ID: " + visitId));
 
+        reportService.deleteAllByTargetTypeAndTargetId(TargetType.VISITEDPLACE, visitId);
         visitedPlacesRepository.delete(visitedPlace);
     }
 

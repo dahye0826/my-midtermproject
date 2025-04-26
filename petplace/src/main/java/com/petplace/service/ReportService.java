@@ -1,14 +1,15 @@
 package com.petplace.service;
 
+import com.petplace.constant.TargetType;
 import com.petplace.dto.ReportRequestDto;
 import com.petplace.entity.Report;
 import com.petplace.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.awt.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +34,28 @@ public class ReportService {
         );
 
         if (alreadyExists){
-            throw  new IllegalComponentStateException("이미 신고하셨습니다.");
+            throw new IllegalStateException("이미 신고하셨습니다.");
         }
 
         reportRepository.save(report);
 
 
     }
+    public long countAllReports() {
+        return reportRepository.count();
+    }
+
+
+    public List<Report> getAllReports() {
+        return reportRepository.findAll(); // 모든 신고를 반환
+    }
+    @Transactional
+    public void deleteAllByTargetTypeAndTargetId(TargetType targetType, Long targetId) {
+        reportRepository.deleteAllByTargetTypeAndTargetId(targetType, targetId);
+
+
+    }
+
+
 
 }

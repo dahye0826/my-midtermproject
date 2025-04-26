@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     boolean existsByTargetIdAndTargetTypeAndUserId(Long targetId, TargetType targetType, Long userId);
+    void deleteAllByTargetTypeAndTargetId(TargetType  targetType, Long targetId);
 }
