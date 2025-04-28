@@ -1,5 +1,6 @@
 package com.petplace.service;
 
+import com.petplace.constant.TargetType;
 import com.petplace.dto.CommentResponseDto;
 import com.petplace.entity.Comment;
 import com.petplace.entity.Post;
@@ -21,6 +22,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final ReportService reportService;
 
 
     public List<CommentResponseDto> getComments(Long postId){
@@ -32,11 +34,11 @@ public class CommentService {
        return comments.stream()
                .map(CommentResponseDto::new)
                .collect(Collectors.toList());
+    }
 
-
-
-
-
+    public Comment getCommentById(Long commentId){
+        return commentRepository.findById(commentId)
+                .orElseThrow(()->new RuntimeException("댓글을 찾을 수 없습니다."));
     }
 
     public Comment updateComment(Long commentId, String content, Long userId) {
@@ -53,6 +55,7 @@ public class CommentService {
 
     @Transactional
     public void deletePost(Long commentId) {
+        reportService.deleteAllByTargetTypeAndTargetId(TargetType.COMMENT, commentId);
         Comment comment=commentRepository.findById(commentId)
          .orElseThrow(()-> new EntityNotFoundException("해당 댓글을 찾을 수 없습니다: " + commentId));
         commentRepository.delete(comment);

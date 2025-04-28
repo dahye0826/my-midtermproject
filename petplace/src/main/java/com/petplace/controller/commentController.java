@@ -23,6 +23,12 @@ public class commentController {
 
     }
 
+    @GetMapping("/{commentId}")
+    public ResponseEntity <CommentResponseDto> getCommentById(@PathVariable Long commentId){
+        Comment comment = commentService.getCommentById(commentId);
+        return ResponseEntity.ok(new CommentResponseDto(comment));
+    }
+
     @PutMapping("/{commentId}")
     public ResponseEntity <CommentResponseDto> updateComment(
             @PathVariable Long commentId,

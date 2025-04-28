@@ -1,17 +1,15 @@
 package com.petplace.service;
 
-import com.petplace.dto.ReportResponseDto;
+import com.petplace.constant.TargetType;
+import com.petplace.dto.ReportRequestDto;
 import com.petplace.entity.Report;
 import com.petplace.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,25 +17,45 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
 
-    public Map<String, Object> getReports(String targetType, Long postId, Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("reportId").descending());
+    public void saveReport(ReportRequestDto reportRequestDto){
 
-        Page<Report> reportsPage = reportRepository.findReportsWithFilters(targetType, postId, userId, pageable);
+        Report report = Report.builder()
+                .targetId(reportRequestDto.getTargetId())
+                .userId(reportRequestDto.getUserId())
+                .reason(reportRequestDto.getReason())
+                .targetType(reportRequestDto.getTargetType())
+                .createdAt(LocalDateTime.now())
+                .build();
+        boolean alreadyExists = reportRepository.existsByTargetIdAndTargetTypeAndUserId(
+                reportRequestDto.getTargetId(),
+                reportRequestDto.getTargetType(),
+                reportRequestDto.getUserId()
 
-        Page<ReportResponseDto> reportsDto = reportsPage.map(ReportResponseDto::fromEntity);
+        );
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("reports", reportsDto.getContent());
-        response.put("currentPage", reportsPage.getNumber() + 1);
-        response.put("totalItems", reportsPage.getTotalElements());
-        response.put("totalPages", reportsPage.getTotalPages());
+        if (alreadyExists){
+            throw new IllegalStateException("이미 신고하셨습니다.");
+        }
 
-        return response;
+        reportRepository.save(report);
+
+
+    }
+    public long countAllReports() {
+        return reportRepository.count();
     }
 
-    public ReportResponseDto getReportById(Long reportId) {
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new RuntimeException("Report not found with id: " + reportId));
-        return ReportResponseDto.fromEntity(report);
+
+    public List<Report> getAllReports() {
+        return reportRepository.findAll(); // 모든 신고를 반환
     }
+    @Transactional
+    public void deleteAllByTargetTypeAndTargetId(TargetType targetType, Long targetId) {
+        reportRepository.deleteAllByTargetTypeAndTargetId(targetType, targetId);
+
+
+    }
+
+
+
 }

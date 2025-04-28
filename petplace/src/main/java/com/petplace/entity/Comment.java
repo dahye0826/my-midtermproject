@@ -5,14 +5,14 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
-@Table(name = "comments")
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "comments")
 public class Comment extends BaseEntity {
 
     @Id
@@ -20,8 +20,7 @@ public class Comment extends BaseEntity {
     @Column(name="comment_id")
     private Long commentId;
 
-   @ManyToOne(optional = true)
-//    @ManyToOne(fetch = FetchType.LAZY)
+   @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
