@@ -39,6 +39,15 @@ public class VisitedPlacesService {
     private final UserRepository userRepository;
     private final ReportService reportService;
 
+    public List<VisitedPlacesResponseDto> getRecentReviews(int size) {
+        Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "visitDate"));
+        List<VisitedPlaces> visitedPlacesList = visitedPlacesRepository.findAll(pageable).getContent();
+
+        return visitedPlacesList.stream()
+                .map(entity -> VisitedPlacesResponseDto.fromEntity(entity, entity.getUser().getUserName()))
+                .collect(Collectors.toList());
+    }
+
     public List<VisitedPlacesResponseDto> getVisitedPlacesByPlaceId(Long placeId) {
         List<VisitedPlaces> visitedPlaces = visitedPlacesRepository.findByPlace_PlaceId(placeId);
 

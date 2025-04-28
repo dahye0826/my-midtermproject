@@ -19,6 +19,7 @@ public class ReportController {
 
     private final ReportService reportService;
 
+
     @PostMapping
     public ResponseEntity<String> report(@RequestBody ReportRequestDto requestDto){
         reportService.saveReport(requestDto);
