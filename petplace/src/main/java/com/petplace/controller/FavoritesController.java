@@ -3,13 +3,11 @@ package com.petplace.controller;
 import com.petplace.dto.FavoritesResponseDto;
 import com.petplace.service.FavoritesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -34,5 +32,21 @@ public class FavoritesController {
     public ResponseEntity<FavoritesResponseDto> getFavoriteById(@PathVariable Long favoriteId) {
         FavoritesResponseDto favorite = favoritesService.getFavoriteById(favoriteId);
         return ResponseEntity.ok(favorite);
+    }
+
+    @PostMapping("/toggle")
+    public ResponseEntity<?> toggleFavorite(@RequestParam Long userId, @RequestParam Long placeId) {
+        try {
+            boolean isAdded = favoritesService.toggleFavorite(userId, placeId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("isAdded", isAdded);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "즐겨찾기 업데이트 중 오류가 발생했습니다.");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }

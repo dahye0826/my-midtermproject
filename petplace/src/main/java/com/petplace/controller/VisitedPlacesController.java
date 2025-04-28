@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/visited-place")
@@ -112,6 +113,41 @@ public class VisitedPlacesController {
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
+    }
+
+    // 특정 사용자의 특정 장소 방문 이력 조회
+    @GetMapping("/check")
+    public ResponseEntity<?> checkVisitedPlace(
+            @RequestParam Long userId,
+            @RequestParam Long placeId) {
+        try {
+            Optional<VisitedPlaces> visitedPlace = visitedPlacesService.findByUserIdAndPlaceId(userId, placeId);
+            if (visitedPlace.isPresent()) {
+                return ResponseEntity.ok(VisitedPlacesResponseDto.fromEntity(visitedPlace.get(), visitedPlace.get().getUser().getUserName()));
+            } else {
+                return ResponseEntity.ok(null);
+            }
+        } catch (Exception e) {
+            logger.error("방문 이력 조회 실패", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "방문 이력을 불러오는데 실패했습니다.");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    // 모든 장소의 평균 별점 조회
+    @GetMapping("/average-ratings")
+    public ResponseEntity<Map<Long, Double>> getAverageRatings() {
+        Map<Long, Double> averageRatings = visitedPlacesService.getAverageRatingsByPlaceId();
+        return ResponseEntity.ok(averageRatings);
+    }
+
+    // 특정 장소의 평균 별점 조회
+    @GetMapping("/places/{placeId}/average-rating")
+    public ResponseEntity<Double> getAverageRatingForPlace(@PathVariable Long placeId) {
+        Double averageRating = visitedPlacesService.getAverageRatingForPlace(placeId);
+        return ResponseEntity.ok(averageRating);
     }
 }
 

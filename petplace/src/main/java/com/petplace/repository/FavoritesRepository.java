@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
 
@@ -16,4 +18,6 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
             "(:userId IS NULL OR f.userId = :userId) AND " +
             "(:placeId IS NULL OR f.placeId = :placeId)")
     Page<Favorites> findFavoritesWithFilters(Long userId, Long placeId, Pageable pageable);
+    
+    Optional<Favorites> findByUserIdAndPlaceId(Long userId, Long placeId);
 }

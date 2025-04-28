@@ -167,5 +167,30 @@ public class VisitedPlacesService {
         visitedPlacesRepository.delete(visitedPlace);
     }
 
+    // 특정 사용자의 특정 장소 방문 이력 조회
+    public Optional<VisitedPlaces> findByUserIdAndPlaceId(Long userId, Long placeId) {
+        return visitedPlacesRepository.findByUser_UserIdAndPlace_PlaceId(userId, placeId);
+    }
+
+    // 모든 장소의 평균 별점 조회
+    public Map<Long, Double> getAverageRatingsByPlaceId() {
+        List<Object[]> results = visitedPlacesRepository.calculateAverageRatingByPlaceId();
+        Map<Long, Double> averageRatings = new HashMap<>();
+        
+        for (Object[] result : results) {
+            Long placeId = (Long) result[0];
+            Double avgRating = (Double) result[1];
+            averageRatings.put(placeId, avgRating);
+        }
+        
+        return averageRatings;
+    }
+
+    // 특정 장소의 평균 별점 조회
+    public Double getAverageRatingForPlace(Long placeId) {
+        Double avgRating = visitedPlacesRepository.calculateAverageRatingForPlace(placeId);
+        return avgRating != null ? avgRating : 0.0;
+    }
+
 }
 

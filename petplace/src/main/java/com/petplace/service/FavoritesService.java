@@ -9,9 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +42,22 @@ public class FavoritesService {
         Favorites favorites = favoritesRepository.findById(favoriteId)
                 .orElseThrow(() -> new RuntimeException("Favorite not found with id: " + favoriteId));
         return FavoritesResponseDto.fromEntity(favorites);
+    }
+
+    @Transactional
+    public boolean toggleFavorite(Long userId, Long placeId) {
+        Optional<Favorites> existingFavorite = favoritesRepository.findByUserIdAndPlaceId(userId, placeId);
+        
+        if (existingFavorite.isPresent()) {
+            favoritesRepository.delete(existingFavorite.get());
+            return false; // 즐겨찾기 제거됨
+        } else {
+            Favorites favorite = new Favorites();
+            favorite.setUserId(userId);
+            favorite.setPlaceId(placeId);
+            favorite.setAddedDate(LocalDate.now());
+            favoritesRepository.save(favorite);
+            return true; // 즐겨찾기 추가됨
+        }
     }
 }
