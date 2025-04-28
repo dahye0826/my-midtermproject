@@ -192,5 +192,14 @@ public class VisitedPlacesService {
         return avgRating != null ? avgRating : 0.0;
     }
 
+    public VisitedPlacesResponseDto getVisitedPlaceById(Long visitId) {
+        VisitedPlaces visitedPlaces = visitedPlacesRepository.findById(visitId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 방문 이력이 존재하지 않습니다: " + visitId));
+
+        String userName = visitedPlaces.getUser() != null ? visitedPlaces.getUser().getUserName() : "익명";
+        return VisitedPlacesResponseDto.fromEntity(visitedPlaces, userName);
+
+    }
+
 }
 

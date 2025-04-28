@@ -56,6 +56,10 @@ public class ReportService {
 
     }
 
+    public void deleteReportById(Long reportId) {
+        reportRepository.deleteById(reportId);
+    }
+
 
 
 }

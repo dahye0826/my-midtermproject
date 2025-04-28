@@ -149,6 +149,11 @@ public class VisitedPlacesController {
         Double averageRating = visitedPlacesService.getAverageRatingForPlace(placeId);
         return ResponseEntity.ok(averageRating);
     }
+
+    @GetMapping("/{visitId}")
+    public ResponseEntity<VisitedPlacesResponseDto> getVisitedPlaceById(@PathVariable Long visitId) {
+        return ResponseEntity.ok(visitedPlacesService.getVisitedPlaceById(visitId));
+    }
 }
 
 
