@@ -53,4 +53,10 @@ public class PlacesController {
         return placesService.searchPlacesByKeyword(keyword);
     }
 
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<PlacesResponseDto>> getPlacesByIds(@RequestParam List<Long> placeIds) {
+        List<PlacesResponseDto> places = placesService.findPlacesByIds(placeIds);
+        return ResponseEntity.ok(places);
+    }
+
 }

@@ -33,4 +33,6 @@ public interface PlacesRepository extends JpaRepository<Places, Long> {
     List<String> findDistinctIndustries();
 
     List<Places> findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(String placeName, String roadAddress);
+
+    List<Places> findByPlaceIdIn(List<Long> ids);
 }

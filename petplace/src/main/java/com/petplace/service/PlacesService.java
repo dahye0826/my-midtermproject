@@ -76,4 +76,10 @@ public class PlacesService {
     public List<Places> searchPlacesByKeyword(String keyword) {
         return placesRepository.findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(keyword, keyword);
     }
+    public List<PlacesResponseDto> findPlacesByIds(List<Long> placeIds) {
+        return placesRepository.findByPlaceIdIn(placeIds)
+                .stream()
+                .map(PlacesResponseDto::fromEntity)
+                .toList();
+    }
 }

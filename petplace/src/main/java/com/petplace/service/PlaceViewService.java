@@ -24,7 +24,7 @@ public class PlaceViewService {
     private final UserRepository userRepository;
 
     public List<RecommendationRequestDto.RecentViewDto> getRecentViewDtos(Long userId) {
-        List<PlaceView> recentViews = placeViewRepository.findTop3ByUser_UserIdOrderByViewedAtDesc(userId);
+        List<PlaceView> recentViews = placeViewRepository.findByUser_UserIdOrderByViewedAtDesc(userId);
 
         return recentViews.stream().map(view -> {
             RecommendationRequestDto.RecentViewDto dto = new RecommendationRequestDto.RecentViewDto();
