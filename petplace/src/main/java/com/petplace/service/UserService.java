@@ -109,4 +109,8 @@ public class UserService {
 public Map<String, Object> getUserVisitedPlaces(Long userId, int page, int size) {
     return visitedPlacesService.getVisitedPlacesByUserId(userId, page, size);
 }
+
+public void deleteUser(Long userId) {
+    userRepository.deleteById(userId);
+}
 }

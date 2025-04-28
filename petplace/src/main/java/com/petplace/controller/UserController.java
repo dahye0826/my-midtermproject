@@ -50,4 +50,10 @@ public class UserController {
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getUserVisitedPlaces(userId, page, size));
     }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().body(Map.of("message", "회원탈퇴가 완료되었습니다."));
+    }
 }
