@@ -52,8 +52,6 @@ public class ReportService {
     @Transactional
     public void deleteAllByTargetTypeAndTargetId(TargetType targetType, Long targetId) {
         reportRepository.deleteAllByTargetTypeAndTargetId(targetType, targetId);
-
-
     }
 
     public void deleteReportById(Long reportId) {

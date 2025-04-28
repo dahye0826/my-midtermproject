@@ -238,19 +238,27 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다: " + id));
 
         List<Comment> comments = commentRepository.findByPost_PostId(id);
-        // 2. 댓글 각각에 대해 신고 삭제
+
+        // null 방지
+        if (comments == null) {
+            comments = new ArrayList<>();
+        }
+
+        // 댓글이 있을 때만 반복 처리
         for (Comment comment : comments) {
             reportService.deleteAllByTargetTypeAndTargetId(TargetType.COMMENT, comment.getCommentId());
         }
 
-        // 3. 게시글(Post) 신고도 삭제
+        // 게시글에 대한 신고 삭제
         reportService.deleteAllByTargetTypeAndTargetId(TargetType.POST, id);
 
-        // 4. 이제 댓글 삭제
-        commentRepository.deleteAll(comments);
+        // 댓글이 있으면 댓글 삭제
+        if (!comments.isEmpty()) {
+            commentRepository.deleteAll(comments);
+        }
 
+        // 마지막으로 게시글 삭제
         postRepository.delete(post);
-
     }
 
 
