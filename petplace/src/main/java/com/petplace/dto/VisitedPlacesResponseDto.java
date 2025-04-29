@@ -13,6 +13,7 @@ public class VisitedPlacesResponseDto {
     private Long visitId;
     private Long userId;
     private Long placeId;
+    private String placeName;
     private String visitDate;
     private Integer rating;
     private String note;
@@ -26,6 +27,7 @@ public class VisitedPlacesResponseDto {
         dto.setVisitId(entity.getVisitId());
         dto.setUserId(entity.getUser().getUserId());
         dto.setPlaceId(entity.getPlace().getPlaceId());
+        dto.setPlaceName(entity.getPlace().getPlaceName());
         dto.setVisitDate(entity.getVisitDate().toString());
         dto.setRating(entity.getRating());
         dto.setNote(entity.getNote());

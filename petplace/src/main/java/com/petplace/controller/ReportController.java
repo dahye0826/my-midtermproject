@@ -19,6 +19,7 @@ public class ReportController {
 
     private final ReportService reportService;
 
+
     @PostMapping
     public ResponseEntity<String> report(@RequestBody ReportRequestDto requestDto){
         reportService.saveReport(requestDto);
@@ -35,11 +36,10 @@ public class ReportController {
     }
 
 
-    @DeleteMapping("/target")
-    public ResponseEntity<String> deleteReportsByTarget (
-                @RequestParam TargetType targetType,
-                @RequestParam Long targetId){
-            reportService.deleteAllByTargetTypeAndTargetId(targetType, targetId);
-            return ResponseEntity.ok("관련된 모든 신고가 삭제되었습니다.");
-        }
+    @DeleteMapping("{reportId}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long reportId) {
+        reportService.deleteReportById(reportId);
+        return ResponseEntity.ok("신고가 삭제되었습니다.");
+    }
+
     }

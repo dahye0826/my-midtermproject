@@ -19,7 +19,7 @@ public interface VisitedPlacesRepository extends JpaRepository<VisitedPlaces, Lo
     Page<VisitedPlaces> findByUser_UserId(Long userId, Pageable pageable);
     //박병규
     List<VisitedPlaces> findAllByPlace_PlaceId(Long placeId);
-
+    Page<VisitedPlaces> findAllByOrderByVisitDateDesc(Pageable pageable);
 
     Page<VisitedPlaces> findByPlace_PlaceId(Long placeId, Pageable pageable);
     //수정

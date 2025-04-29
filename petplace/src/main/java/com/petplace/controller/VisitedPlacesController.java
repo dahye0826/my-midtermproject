@@ -25,6 +25,11 @@ public class VisitedPlacesController {
     private final VisitedPlacesService visitedPlacesService;
     private static final Logger logger = LoggerFactory.getLogger(VisitedPlacesController.class);
 
+    @GetMapping("/recent-reviews")
+    public ResponseEntity<List<VisitedPlacesResponseDto>> getRecentReviews(@RequestParam(defaultValue = "4") int size) {
+        return ResponseEntity.ok(visitedPlacesService.getRecentReviews(size));
+    }
+
     //  특정 장소의 리뷰 전체 조회 (장소 상세 페이지)
     @GetMapping("/reviews")
     public ResponseEntity<List<VisitedPlacesResponseDto>> getByPlaceId(@RequestParam Long placeId) {
@@ -148,6 +153,11 @@ public class VisitedPlacesController {
     public ResponseEntity<Double> getAverageRatingForPlace(@PathVariable Long placeId) {
         Double averageRating = visitedPlacesService.getAverageRatingForPlace(placeId);
         return ResponseEntity.ok(averageRating);
+    }
+
+    @GetMapping("/{visitId}")
+    public ResponseEntity<VisitedPlacesResponseDto> getVisitedPlaceById(@PathVariable Long visitId) {
+        return ResponseEntity.ok(visitedPlacesService.getVisitedPlaceById(visitId));
     }
 }
 
