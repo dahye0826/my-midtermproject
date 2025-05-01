@@ -6,14 +6,14 @@ import com.petplace.dto.UserUpdateRequestDto;
 import com.petplace.entity.Post;
 import com.petplace.entity.PostImage;
 import com.petplace.entity.User;
-import com.petplace.repository.PostRepository;
-import com.petplace.repository.UserRepository;
+import com.petplace.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +25,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final VisitedPlacesService visitedPlacesService;
+    private final VisitedPlacesRepository visitedPlacesRepository;
+    private final ReportRepository reportRepository;
 
     public Map<String, Object> getUser(String search, String role, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("userId").descending());
@@ -105,12 +107,35 @@ public class UserService {
         return response;
     }
 
-//남궁현
-public Map<String, Object> getUserVisitedPlaces(Long userId, int page, int size) {
-    return visitedPlacesService.getVisitedPlacesByUserId(userId, page, size);
-}
+    public Map<String, Object> getUserVisitedPlaces(Long userId, int page, int size) {
+        return visitedPlacesService.getVisitedPlacesByUserId(userId, page, size);
+    }
 
-public void deleteUser(Long userId) {
-    userRepository.deleteById(userId);
-}
+    /**
+     * 사용자 탈퇴 처리 - 모든 관련 데이터를 순서대로 삭제 후 사용자 삭제
+     * 트랜잭션으로 처리하여 모든 작업이 성공하거나 실패하도록 보장
+     */
+    @Transactional
+    public void deleteUser(Long userId) {
+        // 사용자 존재 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + userId));
+
+        try {
+            // 1. 먼저 사용자와 관련된 신고 내역 삭제
+            reportRepository.deleteByUserId(userId);
+
+            // 2. 사용자의 방문 이력 삭제
+            visitedPlacesRepository.deleteByUser_UserId(userId);
+
+            // 3. 사용자의 게시물 삭제 (댓글, 이미지 등은 cascade로 처리됨)
+            postRepository.deleteByUser_UserId(userId);
+
+            // 4. 마지막으로 사용자 삭제
+            userRepository.delete(user);
+
+        } catch (Exception e) {
+            throw new RuntimeException("회원탈퇴 처리 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
+    }
 }
