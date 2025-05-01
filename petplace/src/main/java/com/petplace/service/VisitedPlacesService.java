@@ -185,13 +185,13 @@ public class VisitedPlacesService {
     public Map<Long, Double> getAverageRatingsByPlaceId() {
         List<Object[]> results = visitedPlacesRepository.calculateAverageRatingByPlaceId();
         Map<Long, Double> averageRatings = new HashMap<>();
-        
+
         for (Object[] result : results) {
             Long placeId = (Long) result[0];
             Double avgRating = (Double) result[1];
             averageRatings.put(placeId, avgRating);
         }
-        
+
         return averageRatings;
     }
 
@@ -207,8 +207,22 @@ public class VisitedPlacesService {
 
         String userName = visitedPlaces.getUser() != null ? visitedPlaces.getUser().getUserName() : "익명";
         return VisitedPlacesResponseDto.fromEntity(visitedPlaces, userName);
-
     }
 
-}
+    /**
+     * 사용자의 방문 이력 삭제
+     * 사용자 탈퇴 시 사용자와 관련된 방문 이력을 모두 삭제
+     */
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        // 먼저 이 사용자의 방문 이력에 관련된 신고 삭제
+        List<VisitedPlaces> userVisits = visitedPlacesRepository.findByUser_UserId(userId);
 
+        for (VisitedPlaces visit : userVisits) {
+            reportService.deleteAllByTargetTypeAndTargetId(TargetType.VISITEDPLACE, visit.getVisitId());
+        }
+
+        // 그 후 방문 이력 삭제
+        visitedPlacesRepository.deleteByUser_UserId(userId);
+    }
+}
