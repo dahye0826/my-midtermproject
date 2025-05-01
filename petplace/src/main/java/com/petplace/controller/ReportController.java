@@ -42,4 +42,4 @@ public class ReportController {
         return ResponseEntity.ok("신고가 삭제되었습니다.");
     }
 
-    }
+}

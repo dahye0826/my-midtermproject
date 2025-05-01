@@ -13,18 +13,21 @@ import java.util.List;
 public interface PlacesRepository extends JpaRepository<Places, Long> {
     @Query("SELECT p FROM Places p WHERE " +
             "(:search IS NULL OR LOWER(p.placeName) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-            "(:industry IS NULL OR " +
-            "LOWER(p.industryMain) LIKE LOWER(CONCAT('%', :industry, '%')) OR " +
-            "LOWER(p.industryMid) LIKE LOWER(CONCAT('%', :industry, '%')) OR " +
-            "LOWER(p.industrySub) LIKE LOWER(CONCAT('%', :industry, '%'))) AND " +
+            "(:industry IS NULL OR LOWER(p.industrySub) = LOWER(:industry)) AND " +
             "(:city IS NULL OR LOWER(p.city) LIKE LOWER(CONCAT('%', :city, '%'))) AND " +
             "(:district IS NULL OR LOWER(p.district) LIKE LOWER(CONCAT('%', :district, '%'))) AND " +
             "(:petSize IS NULL OR " +
-            // General matching
             "(:petSize = 'small' AND (LOWER(p.petSize) LIKE '%소형%' OR LOWER(p.petSize) LIKE '%모두%' OR LOWER(p.petSize) LIKE '%전체%' OR LOWER(p.petSize) LIKE '%10kg%미만%' OR LOWER(p.petSize) LIKE '%10kg%이하%')) OR " +
             "(:petSize = 'medium' AND (LOWER(p.petSize) LIKE '%중형%' OR LOWER(p.petSize) LIKE '%모두%' OR LOWER(p.petSize) LIKE '%전체%' OR LOWER(p.petSize) LIKE '%10kg%이상%' OR LOWER(p.petSize) LIKE '%10kg%25kg%')) OR " +
             "(:petSize = 'large' AND (LOWER(p.petSize) LIKE '%대형%' OR LOWER(p.petSize) LIKE '%모두%' OR LOWER(p.petSize) LIKE '%전체%' OR LOWER(p.petSize) LIKE '%25kg%이상%')))")
-    Page<Places> findPlacesWithFilters(String search, String industry, String city, String district, String petSize, Pageable pageable);
+    Page<Places> findPlacesWithFilters(
+            String search,
+            String industry,
+            String city,
+            String district,
+            String petSize,
+            Pageable pageable
+    );
 
     @Query("SELECT DISTINCT p.city FROM Places p WHERE p.city IS NOT NULL ORDER BY p.city")
     List<String> findDistinctCities();
