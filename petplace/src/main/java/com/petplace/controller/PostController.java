@@ -8,15 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@RequiredArgsConstructor //생성자를 자동으로 만들어줌
 @RestController
 @RequestMapping("/api/community")
 public class PostController {
+
     private final PostService postService;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
-
+    // http://localhost:9000/api/community?page=1&size=10
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(required = false) String search,
@@ -24,6 +23,7 @@ public class PostController {
         if (page < 0) {
             page = 0;
         }
+
         return ResponseEntity.ok(postService.getPosts(search, page, size));
     }
 
