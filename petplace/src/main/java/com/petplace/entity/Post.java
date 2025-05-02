@@ -5,9 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.NotFound;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,14 +22,8 @@ public class Post extends BaseEntity {
     private Long postId;
     private String content;
 
-    //지연 로딩: post 엔티티를 조회할때 바로 정보를 가져오지 않는다.
-    //즉시 로딩: 한 번에 다불러옴
-    //post.getUser()를 호출하는 순간에 DB에서 진짜 User 정보를 조회
-//    FetchType.EAGER
-    // JPA N+1문제를 가지고 있음 이거를 어떻게 할건지
-    // 단점이 무엇인가? 이거는 공부하세요
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // 실제 FK 컬럼명
+    @JoinColumn(name = "user_id")
     private User user;
 
     private String title ;

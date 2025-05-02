@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 장소 응답 DTO
+ * 클라이언트에 전송할 장소 정보를 담는 데이터 전송 객체
+ */
 @Data
 @NoArgsConstructor
 public class PlacesResponseDto {
@@ -33,14 +37,19 @@ public class PlacesResponseDto {
     private String petSize;
     private String[] petSizeCategories;
 
+    /**
+     * Places 엔티티를 DTO로 변환하는 정적 메서드
+     * @param place 장소 엔티티
+     * @return 변환된 응답 DTO
+     */
     public static PlacesResponseDto fromEntity(Places place) {
         PlacesResponseDto dto = new PlacesResponseDto();
         dto.setPlaceId(place.getPlaceId());
         dto.setPlaceName(place.getPlaceName());
         dto.setPlaceImage(place.getPlaceImage());
 
-        // Use industrySub instead of industryMain for category display
-        // This will show the specific category (카페, 식당, etc.) instead of "반려동물업"
+        // 카테고리 표시를 위해 industrySub를 industryMain으로 사용
+        // industrySub가 없으면 industryMain 사용 (카페, 식당 등의 구체적인 카테고리 표시)
         dto.setIndustryMain(place.getIndustrySub() != null ? place.getIndustrySub() : place.getIndustryMain());
 
         dto.setCity(place.getCity());
@@ -60,7 +69,7 @@ public class PlacesResponseDto {
         dto.setPlacePhone(place.getPlacePhone());
         dto.setPetSize(place.getPetSize());
 
-        // Format last updated date if available
+        // 최종 업데이트 날짜 포맷팅
         if (place.getLastUpdated() != null) {
             dto.setLastUpdated(place.getLastUpdated().toLocalDate().toString());
         }

@@ -9,8 +9,24 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * 장소 리포지토리
+ * 장소 데이터 접근을 위한 인터페이스
+ */
 @Repository
 public interface PlacesRepository extends JpaRepository<Places, Long> {
+    /**
+     * 필터를 적용하여 장소 검색
+     * 검색어, 산업 카테고리, 도시, 지역구, 반려견 크기 기준으로 검색
+     *
+     * @param search 검색어
+     * @param industry 산업 카테고리
+     * @param city 도시
+     * @param district 지역구
+     * @param petSize 반려견 크기
+     * @param pageable 페이징 정보
+     * @return 필터링된 장소 페이지
+     */
     @Query("SELECT p FROM Places p WHERE " +
             "(:search IS NULL OR LOWER(p.placeName) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
             "(:industry IS NULL OR LOWER(p.industrySub) = LOWER(:industry)) AND " +
@@ -29,11 +45,25 @@ public interface PlacesRepository extends JpaRepository<Places, Long> {
             Pageable pageable
     );
 
+    /**
+     * 중복 없는 모든 도시 목록 조회
+     * @return 도시 목록
+     */
     @Query("SELECT DISTINCT p.city FROM Places p WHERE p.city IS NOT NULL ORDER BY p.city")
     List<String> findDistinctCities();
 
+    /**
+     * 중복 없는 모든 산업 분류 목록 조회
+     * @return 산업 분류 목록
+     */
     @Query("SELECT DISTINCT p.industryMain FROM Places p WHERE p.industryMain IS NOT NULL ORDER BY p.industryMain")
     List<String> findDistinctIndustries();
 
+    /**
+     * 장소명 또는 도로명 주소로 장소 검색
+     * @param placeName 장소명 키워드
+     * @param roadAddress 도로명 주소 키워드
+     * @return 검색된 장소 목록
+     */
     List<Places> findByPlaceNameContainingIgnoreCaseOrRoadAddressContainingIgnoreCase(String placeName, String roadAddress);
 }
