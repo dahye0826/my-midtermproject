@@ -12,6 +12,11 @@ import java.util.List;
 @RequestMapping("/api/community")
 public class PostController {
     private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(required = false) String search,
