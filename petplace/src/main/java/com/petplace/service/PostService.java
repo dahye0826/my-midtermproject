@@ -37,6 +37,8 @@ public class PostService {
     private final ReportService reportService;
     private final CommentRepository commentRepository ;
 
+
+    // 게시글 목록 조회 (검색 + 페이징)
     @Transactional
     public Page<PostResponseDto> getPosts(String search, int page, int size) {
         int safePage = Math.max(page - 1, 0);
@@ -48,6 +50,7 @@ public class PostService {
         } else {
             postPage = postRepository.findAll(pageable);
         }
+
 
         return postPage.map(post ->
         {
@@ -66,10 +69,13 @@ public class PostService {
                     post.getContent(),
                     imageUrls,
                     post.getPlace() != null ? post.getPlace().getPlaceId() : null,
+                    post.getPlace() != null ? post.getPlace().getPlaceName() : null,
+                    post.getPlace() != null ? post.getPlace().getRoadAddress() : null
             );
         });
     }
 
+    // 게시글 + 이미지 저장
     public void savePostWithImages(String title, String content, Long userId, Long placeId, List<MultipartFile> images) {
 
         Post post = new Post();
@@ -77,18 +83,25 @@ public class PostService {
         post.setContent(content);
         post.setViewCount(0);
         post.setCommentCount(0);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         post.setUser(user);
 
+
+
+        // 장소가 선택된 경우만 연결
         if (placeId != null) {
             Places place = placesRepository.findById(placeId)
                     .orElseThrow(() -> new RuntimeException("해당 장소를 찾을 수 없습니다."));
             post.setPlace(place);
         }
+
+        // 게시글 먼저 저장
         postRepository.save(post);
 
         String uploadDir = "C:/petImage/images/post/";
+
         if (images != null) {
             for (MultipartFile file : images) {
                 if (!file.isEmpty()) {
@@ -101,6 +114,7 @@ public class PostService {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     PostImage postImage = new PostImage();
                     postImage.setImageUrl("/images/post/" + fileName);
                     postImage.setPost(post);
@@ -108,6 +122,7 @@ public class PostService {
                 }
             }
         }
+
     }
 
     @Transactional
@@ -122,10 +137,12 @@ public class PostService {
         Places place = post.getPlace();
         Long placeId = null;
         String placeName = null;
+        String roadAddress = null;
 
         if (place != null) {
             placeId = place.getPlaceId();
             placeName = place.getPlaceName();
+            roadAddress = place.getRoadAddress();
         }
 
 
@@ -143,6 +160,8 @@ public class PostService {
                         .map(PostImage::getImageUrl)
                         .collect(Collectors.toList()),
                 placeId,
+                placeName,
+                roadAddress
 
         );
     }
