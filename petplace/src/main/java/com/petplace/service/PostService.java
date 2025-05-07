@@ -69,7 +69,8 @@ public class PostService {
                     post.getContent(),
                     imageUrls,
                     post.getPlace() != null ? post.getPlace().getPlaceId() : null,
-                    post.getPlace() != null ? post.getPlace().getPlaceName() : null
+                    post.getPlace() != null ? post.getPlace().getPlaceName() : null,
+                    post.getPlace() != null ? post.getPlace().getRoadAddress() : null
             );
         });
     }
@@ -136,10 +137,12 @@ public class PostService {
         Places place = post.getPlace();
         Long placeId = null;
         String placeName = null;
+        String roadAddress = null;
 
         if (place != null) {
             placeId = place.getPlaceId();
             placeName = place.getPlaceName();
+            roadAddress = place.getRoadAddress();
         }
 
 
@@ -157,7 +160,8 @@ public class PostService {
                         .map(PostImage::getImageUrl)
                         .collect(Collectors.toList()),
                 placeId,
-                placeName
+                placeName,
+                roadAddress
 
         );
     }

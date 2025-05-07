@@ -81,6 +81,7 @@ public class UserService {
 
                     Long placeId = post.getPlace() != null ? post.getPlace().getPlaceId() : null;
                     String placeName = post.getPlace() != null ? post.getPlace().getPlaceName() : null;
+                    String roadAddress = post.getPlace() != null ? post.getPlace().getRoadAddress() : null;
 
                     return new PostResponseDto(
                             post.getPostId(),
@@ -94,7 +95,8 @@ public class UserService {
                             post.getContent(),
                             imageUrls,
                             placeId,
-                            placeName
+                            placeName,
+                            roadAddress
                     );
                 })
                 .collect(Collectors.toList());
