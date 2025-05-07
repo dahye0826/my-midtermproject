@@ -14,7 +14,7 @@ public class RecommendationService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public List<Integer> getRecommendedPlaces(Long userId, List<RecommendationRequestDto.RecentViewDto> recentViews) {
-        String flaskUrl = "http://localhost:5001/recommend";
+        String flaskUrl = "http://localhost:9001/api/recommend";
 
         // DTO → Map 변환
         List<Map<String, Object>> recentViewsAsMap = recentViews.stream().map(dto -> {
@@ -25,7 +25,7 @@ public class RecommendationService {
         }).toList();
 
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("userId", userId.toString()); // Flask가 String 기대하면 toString
+        requestBody.put("userId", userId.toString());
         requestBody.put("recentViews", recentViewsAsMap);
 
         HttpHeaders headers = new HttpHeaders();
