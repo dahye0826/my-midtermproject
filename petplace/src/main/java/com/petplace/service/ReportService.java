@@ -41,14 +41,16 @@ public class ReportService {
 
 
     }
+
     public long countAllReports() {
         return reportRepository.count();
     }
 
 
     public List<Report> getAllReports() {
-        return reportRepository.findAll(); // 모든 신고를 반환
+        return reportRepository.findAll();
     }
+
     @Transactional
     public void deleteAllByTargetTypeAndTargetId(TargetType targetType, Long targetId) {
         reportRepository.deleteAllByTargetTypeAndTargetId(targetType, targetId);

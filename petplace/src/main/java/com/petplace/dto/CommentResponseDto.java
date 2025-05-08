@@ -21,8 +21,6 @@ public class CommentResponseDto {
     private Long postId;
     private String userName;
 
-
-
     public CommentResponseDto(Comment comment) {
             this.commentId = comment.getCommentId();
             this.content = comment.getContent();

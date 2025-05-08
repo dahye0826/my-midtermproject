@@ -52,8 +52,10 @@ public class PostService {
         }
 
 
+
         return postPage.map(post ->
         {
+            int commentCount = commentRepository.countByPost_PostId(post.getPostId());
             List<String> imageUrls = post.getImages().stream()
                     .map(PostImage::getImageUrl)
                     .collect(Collectors.toList());
@@ -65,7 +67,7 @@ public class PostService {
                     post.getCreatedAt() != null ? post.getCreatedAt().toLocalDate().toString() : "작성일 없음",
                     post.getUpdatedAt() != null ? post.getUpdatedAt().toLocalDate().toString() : "수정일 없음",
                     post.getViewCount(),
-                    post.getCommentCount(),
+                    commentCount,
                     post.getContent(),
                     imageUrls,
                     post.getPlace() != null ? post.getPlace().getPlaceId() : null,

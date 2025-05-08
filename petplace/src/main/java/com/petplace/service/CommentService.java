@@ -68,7 +68,6 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
-        // 임시 사용자 생성 또는 조회 (실제 환경에서는 userRepository로 조회)
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자가 존재하지 않습니다."));
 

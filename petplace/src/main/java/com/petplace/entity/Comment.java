@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Comment extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //기본 키 자동 생성 방식이며 db에서 1씩 증가
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="comment_id")
     private Long commentId;
 

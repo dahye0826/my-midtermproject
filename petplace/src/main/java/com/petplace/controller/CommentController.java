@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
-public class commentController {
+public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/post/{postId}")

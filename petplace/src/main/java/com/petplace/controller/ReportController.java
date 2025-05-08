@@ -30,6 +30,7 @@ public class ReportController {
     public ResponseEntity<?> getAllReports(){
         return ResponseEntity.ok(reportService.getAllReports());
     }
+
     @GetMapping("/count")
     public ResponseEntity<Long> getReportCount() {
         return ResponseEntity.ok(reportService.countAllReports());

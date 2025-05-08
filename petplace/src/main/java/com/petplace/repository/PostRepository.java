@@ -14,7 +14,9 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     Page<Post> findByUser_UserId(Long userId, Pageable pageable);
     Page<Post> findByTitleContaining(String keyword,Pageable pageable);
 
-    // 사용자 ID로 게시물 삭제 메소드 추가
+
     @Transactional
     void deleteByUser_UserId(Long userId);
+
+
 }

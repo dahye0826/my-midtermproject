@@ -23,7 +23,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query("DELETE FROM Report r WHERE r.targetType = :targetType AND r.targetId = :targetId")
     void deleteAllByTargetTypeAndTargetId(@Param("targetType") TargetType targetType, @Param("targetId") Long targetId);
 
-    // 특정 사용자가 제출한 모든 신고 조회
+
     List<Report> findByUserId(Long userId);
 
     // 특정 사용자가 제출한 모든 신고 삭제
