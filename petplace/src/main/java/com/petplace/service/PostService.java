@@ -51,8 +51,6 @@ public class PostService {
             postPage = postRepository.findAll(pageable);
         }
 
-
-
         return postPage.map(post ->
         {
             int commentCount = commentRepository.countByPost_PostId(post.getPostId());
